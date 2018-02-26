@@ -4,15 +4,43 @@
       <div class="section-wrapper">
         <h1>
           <svg class="section-icon"><use xlink:href="assets/img/icons.svg#icon-windows"></use></svg>
-          Create and Manage Windows
+          Manage Points
         </h1>
-        <h3>The <code>BrowserWindow</code> module in Electron allows you to create a new browser window or manage an existing one.</h3>
-
-        <p>Each browser window is a separate process, known as the renderer process. This process, like the main process that controls the life cycle of the app, has full access to the Node.js APIs.
-
-        <p>Open the <a href="http://electron.atom.io/docs/api/browser-window">full API documentation<span class="u-visible-to-screen-reader">(opens in new window)</span></a> in your browser.</p>
+        <h3>Manage all points added.</h3>
       </div>
     </header>
+
+    <div class="demo">
+      <div class="demo-wrapper">
+        <div id="manage-map" class="map-content"></div>
+      </div>
+    </div>
+    
+    <div class="demo">
+      <div class="demo-wrapper">
+        <div class="map-content">
+          <input type="text" placeholder="Name of new point">
+          <button id='map-search'>Search</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-wrapper">
+        <div class="map-content">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <div class="demo">
       <div class="demo-wrapper">
@@ -111,10 +139,17 @@
     </div>
 
     <script type="text/javascript">
+      require('./renderer-process/windows/map-initialize')
       require('./renderer-process/windows/create-window')
       require('./renderer-process/windows/manage-window')
       require('./renderer-process/windows/using-window-events')
       require('./renderer-process/windows/frameless-window')
+      
+      function initialize() {
+        let map = new BMap.Map('manage-map');
+        map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+        require('./renderer-process/windows/map-initialize').evt_init(map);
+      }
     </script>
 
   </section>
