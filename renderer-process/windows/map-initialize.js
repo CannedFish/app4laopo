@@ -1,24 +1,47 @@
+const path = require('path');
 const settings = require('electron-settings');
 const prompt = require('electron-prompt');
 
+const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
+
+const locInput = document.getElementById('map-loc');
+const searchAddBtn = document.getElementById('map-search-add');
 const searchBtn = document.getElementById('map-search');
 
-exports.evt_init = (map) => {
-  searchBtn.addEventListener('click', (e) => {
+function mapSearch(map, callback) {
+  if(locInput.value == '') {
+    alert("Please input a localtion name.");
+  } else {
     let options = {
       onSearchComplete: (rs) => {
         if(local.getStatus() == BMAP_STATUS_SUCCESS) {
-          let s = [];
-          for(let i = 0; i < rs.getCurrentNumPois(); i++) {
-            s.push(`${rs.getPoi(i).title}, ${rs.getPoi(i).address}`);
-            console.log(rs.getPoi(i));
-          }
-          alert(s.join('\n'));
+          callback(rs);
         }
       }
     };
     let local = new BMap.LocalSearch(map, options);
-    local.search("公园");
+    local.search(locInput.value);
+  }
+}
+
+exports.evt_init = (map) => {
+  searchAddBtn.addEventListener('click', (e) => {
+    mapSearch(map, (rs) => {
+      for(let i = 0; i < rs.getCurrentNumPois(); i++) {
+        mapLocTable.addRow(rs.getPoi(i));
+      }
+    });
+  });
+
+  searchBtn.addEventListener('click', (e) => {
+    mapSearch(map, (rs) => {
+      let s = [];
+      for(let i = 0; i < rs.getCurrentNumPois(); i++) {
+        s.push(`${rs.getPoi(i).title}, ${rs.getPoi(i).address}`);
+        console.log(rs.getPoi(i));
+      }
+      alert(s.join('\n'));
+    });
   });
 };
 
@@ -44,6 +67,8 @@ function main() {
     script.src = `http://api.map.baidu.com/api?v=2.0&ak=${ak}&callback=initialize`;
     document.body.appendChild(script);
   }
+
+  mapLocTable.init();
 }
 
 main();
