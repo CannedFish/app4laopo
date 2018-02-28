@@ -30,6 +30,7 @@ exports.evt_init = (map) => {
       for(let i = 0; i < rs.getCurrentNumPois(); i++) {
         mapLocTable.addRow(rs.getPoi(i));
       }
+      mapLocTable.save();
     });
   });
 
