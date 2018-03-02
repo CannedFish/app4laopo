@@ -5,9 +5,12 @@ const locTable = document.getElementById('loc-table');
 
 const dataPath = path.join(__dirname, "../../data");
 const locFilePath = path.join(__dirname, "../../data/loc.dat");
-// const disFilePath = path.join(__dirname, "../../data/dis.dat");
 
 let locCache = null;
+
+exports.getLocList = () => {
+  return locCache;
+}
 
 function locCacheSave() {
   fs.writeFile(locFilePath, JSON.stringify(locCache), (err) => {

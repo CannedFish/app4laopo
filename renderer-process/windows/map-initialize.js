@@ -8,7 +8,9 @@ const locInput = document.getElementById('map-loc');
 const searchAddBtn = document.getElementById('map-search-add');
 const searchBtn = document.getElementById('map-search');
 
-function mapSearch(map, callback) {
+let map = null;
+
+function mapSearch(callback) {
   if(locInput.value == '') {
     alert("Please input a localtion name.");
   } else {
@@ -24,9 +26,9 @@ function mapSearch(map, callback) {
   }
 }
 
-exports.evt_init = (map) => {
+exports.evt_init = () => {
   searchAddBtn.addEventListener('click', (e) => {
-    mapSearch(map, (rs) => {
+    mapSearch((rs) => {
       for(let i = 0; i < rs.getCurrentNumPois(); i++) {
         mapLocTable.addRow(rs.getPoi(i));
       }
@@ -35,7 +37,7 @@ exports.evt_init = (map) => {
   });
 
   searchBtn.addEventListener('click', (e) => {
-    mapSearch(map, (rs) => {
+    mapSearch((rs) => {
       let s = [];
       for(let i = 0; i < rs.getCurrentNumPois(); i++) {
         s.push(`${rs.getPoi(i).title}, ${rs.getPoi(i).address}`);
@@ -44,6 +46,19 @@ exports.evt_init = (map) => {
       alert(s.join('\n'));
     });
   });
+};
+
+exports.map_init = (_map) => {
+  map = _map;
+};
+
+exports.dis_query = (src, dst, callback) => {
+  let transit = new BMap.DrivingRoute(map, {
+    onSearchComplete: (rs) => {
+      callback(src, dst, rs.getPlan(0).getDistance(true));
+    }
+  });
+  transit.search(src, dst);
 };
 
 function main() {
