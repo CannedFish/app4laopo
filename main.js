@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const electron = require('electron')
-const autoUpdater = require('./auto-updater')
+// const autoUpdater = require('./auto-updater')
 
 const BrowserWindow = electron.BrowserWindow
 const app = electron.app
@@ -12,6 +12,10 @@ if (process.mas) app.setName('Electron APIs')
 
 var mainWindow = null
 
+exports.instance = () => {
+  return mainWindow;
+}
+
 function initialize () {
   var shouldQuit = makeSingleInstance()
   if (shouldQuit) return app.quit()
@@ -20,7 +24,7 @@ function initialize () {
 
   function createWindow () {
     var windowOptions = {
-      width: 1080,
+      width: 1350,
       minWidth: 680,
       height: 840,
       title: app.getName()
@@ -47,7 +51,7 @@ function initialize () {
 
   app.on('ready', function () {
     createWindow()
-    autoUpdater.initialize()
+    // autoUpdater.initialize()
   })
 
   app.on('window-all-closed', function () {
@@ -87,16 +91,16 @@ function loadDemos () {
   files.forEach(function (file) {
     require(file)
   })
-  autoUpdater.updateMenu()
+  // autoUpdater.updateMenu()
 }
 
 // Handle Squirrel on Windows startup events
 switch (process.argv[1]) {
   case '--squirrel-install':
-    autoUpdater.createShortcut(function () { app.quit() })
+    // autoUpdater.createShortcut(function () { app.quit() })
     break
   case '--squirrel-uninstall':
-    autoUpdater.removeShortcut(function () { app.quit() })
+    // autoUpdater.removeShortcut(function () { app.quit() })
     break
   case '--squirrel-obsolete':
   case '--squirrel-updated':

@@ -7,3 +7,7 @@
   padding: .5em 1.5em;
 }
 
+#selection tr:hover {
+  background: #f3f6fa;
+}
+

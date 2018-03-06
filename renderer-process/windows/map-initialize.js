@@ -1,6 +1,7 @@
 const path = require('path');
 const settings = require('electron-settings');
 const prompt = require('electron-prompt');
+const ipc = require('electron').ipcRenderer;
 
 const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
 
@@ -37,13 +38,14 @@ exports.evt_init = () => {
   });
 
   searchBtn.addEventListener('click', (e) => {
+    searchBtn.disabled = true;
     mapSearch((rs) => {
-      let s = [];
+      let data = [];
       for(let i = 0; i < rs.getCurrentNumPois(); i++) {
-        s.push(`${rs.getPoi(i).title}, ${rs.getPoi(i).address}`);
-        console.log(rs.getPoi(i));
+        data.push(rs.getPoi(i));
       }
-      alert(s.join('\n'));
+      ipc.send('select-show', data);
+      searchBtn.disabled = false;
     });
   });
 };
@@ -52,13 +54,22 @@ exports.map_init = (_map) => {
   map = _map;
 };
 
-exports.dis_query = (src, dst, callback) => {
-  let transit = new BMap.DrivingRoute(map, {
-    onSearchComplete: (rs) => {
-      callback(src, dst, rs.getPlan(0).getDistance(true));
-    }
+const re = /[\d.]+/;
+exports.dis_query = (src, dst) => {
+  return new Promise((resolve, reject) => {
+    let transit = new BMap.DrivingRoute(map, {
+      onSearchComplete: (rs) => {
+        let _src = mapLocTable.getLocByTitle(src),
+          _dst = mapLocTable.getLocByTitle(dst);
+        resolve([
+          typeof(_src.enTitle) === 'undefined' ? src : _src.enTitle,
+          typeof(_dst.enTitle) === 'undefined' ? dst : _dst.enTitle, 
+          Number(re.exec(rs.getPlan(0).getDistance(true))[0])
+        ]);
+      }
+    });
+    transit.search(src, dst);
   });
-  transit.search(src, dst);
 };
 
 function main() {
