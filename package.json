@@ -1,7 +1,7 @@
 {
   "name": "APP4Laopo",
   "productName": "Application for Laopo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Application for Laopo",
   "private": true,
   "main": "main.js",
