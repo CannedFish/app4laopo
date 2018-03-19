@@ -31,21 +31,49 @@ function disLoad() {
   });
 }
 
+function __promiseArray(arr, fn) {
+  return arr.reduce((p, nextItem) => {
+    return p.then((lastValue) => {
+      return fn(nextItem, lastValue);
+    });
+  }, Promise.resolve([]));
+}
+
 function updateDis() {
   disUpdateBtn.disabled = true;
   let c_loc = [];
   let locList = mapLocTable.getLocList();
   for(let i = 0; i < locList.length; ++i) {
     c_loc.push(...locList.slice(i+1).map((_l) => {
-      return [locList[i].title, _l.title];
+      return [locList[i], _l];
     }));
   }
-  Promise.all(c_loc.map((locSet) => {
-    return map.dis_query(locSet[0], locSet[1]);
-  })).then((values) => {
+  let c_loc_slice = [];
+  for(let i = 0; i < c_loc.length; i += 5) {
+    c_loc_slice.push(c_loc.slice(i, i+5));
+  }
+  /* Promise.all(c_loc_slice.map((_c_loc) => {
+    return Promise.all(_c_loc.map((locSet) => {
+      return map.dis_query(locSet[0], locSet[1]);
+    }));
+  })) */
+  __promiseArray(c_loc_slice, (_c_loc, _l_values) => {
+    return Promise.all(_c_loc.map((locSet) => {
+      return map.dis_query(locSet[0], locSet[1]);
+    })).then((values) => {
+      return Promise.resolve(_l_values.concat(values));
+    }).catch((reason) => {
+      return Promise.resolve(_l_values.concat([9999,9999,9999,9999,9999]));
+    });
+  }).then((values) => {
+    // disCache = [].concat.apply([], values);
     disCache = values;
     disSave();
     alert("Update completed!");
+    disUpdateBtn.disabled = false;
+  }).catch((reason) => {
+    console.log(reason);
+    alert("Error happen!");
     disUpdateBtn.disabled = false;
   });
 }
@@ -59,14 +87,15 @@ function clearTable() {
 function addRow(re) {
   let row = disTable.insertRow();
   re.map((_r) => {
-    row.insertCell().appendChild(document.createTextNode(_r));
+    // row.insertCell().appendChild(document.createTextNode(_r));
+    row.insertCell().innerHTML = _r;
   });
 };
 
 function search(target) {
   clearTable();
   disCache.map((dis) => {
-    return [dis[0], dis[1], dis[2], Math.round(Math.abs(dis[2]-target)*10)/10];
+    return [dis[0], dis[1], dis[2], Math.round(Math.abs(dis[2]-target)*1000)/1000];
   }).sort((a, b) => {
     if(a[3] < b[3]) {
       return -1;

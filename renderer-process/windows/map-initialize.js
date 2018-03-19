@@ -59,12 +59,11 @@ exports.dis_query = (src, dst) => {
   return new Promise((resolve, reject) => {
     let transit = new BMap.DrivingRoute(map, {
       onSearchComplete: (rs) => {
-        let _src = mapLocTable.getLocByTitle(src),
-          _dst = mapLocTable.getLocByTitle(dst);
         resolve([
-          typeof(_src.enTitle) === 'undefined' ? src : _src.enTitle,
-          typeof(_dst.enTitle) === 'undefined' ? dst : _dst.enTitle, 
-          Number(re.exec(rs.getPlan(0).getDistance(true))[0])
+          typeof(src.enTitle) === 'undefined' ? src.title : `${src.title}<br>${src.enTitle}`,
+          typeof(dst.enTitle) === 'undefined' ? dst.title : `${dst.title}<br>${dst.enTitle}`, 
+          // Number(re.exec(rs.getPlan(0).getDistance(true))[0])
+          rs.taxiFare == null ? 0 : rs.taxiFare.distance / 1000
         ]);
       }
     });
