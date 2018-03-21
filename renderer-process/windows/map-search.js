@@ -23,12 +23,17 @@ function disSave() {
 }
 
 function disLoad() {
-  fs.readFile(disFilePath, 'utf8', (err, data) => {
-    if(err) {
-      disCache = [];
-      return ;
-    }
-    disCache = JSON.parse(data);
+  // fs.readFile(disFilePath, 'utf8', (err, data) => {
+    // if(err) {
+      // disCache = [];
+      // return ;
+    // }
+    // disCache = JSON.parse(data);
+  // });
+  db.getDistance((err, rows) => {
+    disCache = rows.map((row) => {
+      return [row.src, row.dst, row.dis];
+    });
   });
 }
 
@@ -70,11 +75,13 @@ function updateDis(locList, newLoc, callback) {
     db.insertDistance(values);
     disCache.push(values);
     alert("Update completed!");
+    callback(null);
     // disUpdateBtn.disabled = false;
   }).catch((reason) => {
     console.log(reason);
     alert("Error happen!");
     // disUpdateBtn.disabled = false;
+    callback(reason);
   });
 }
 exports.updateDis = updateDis;
@@ -111,9 +118,9 @@ function search(target) {
 }
 
 function eventInit() {
-  disUpdateBtn.addEventListener('click', (evt) => {
-    updateDis();
-  });
+  // disUpdateBtn.addEventListener('click', (evt) => {
+    // updateDis();
+  // });
 
   searchBtn.addEventListener('click', (evt) => {
     if(searchInput.value == '') {

@@ -1,5 +1,4 @@
 const path = require('path');
-const ipc = electron.ipcMain;
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(path.join(__dirname, '../../data/data.db'));
