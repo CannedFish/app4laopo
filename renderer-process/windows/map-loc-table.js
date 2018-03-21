@@ -6,6 +6,7 @@ const locTable = document.getElementById('loc-table');
 
 const dataPath = path.join(__dirname, "../../data");
 const locFilePath = path.join(__dirname, "../../data/loc.dat");
+const mapSearch = require(path.join(__dirname, "./map-search.js"));
 
 let locCache = null;
 
@@ -74,7 +75,10 @@ exports.addRow = addRow;
 
 ipc.on('loc-select-reply', (evt, row) => {
   addRow(row);
-  locCacheSave();
+  // TODO: update distance
+  mapSearch.updateDis(locCache, row, () => {
+    locCacheSave();
+  });
 }).on('edit-confirm-reply', (evt, loc, tableIdx, cacheIdx) => {
   locCache[cacheIdx].enTitle = loc.enTitle;
   locCacheSave();

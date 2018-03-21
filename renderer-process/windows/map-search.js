@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
 const map = require(path.join(__dirname, "./map-initialize.js"));
+const db = require(path.join(__dirname, "../../main-process/windows/db.js"));
 
 const disFilePath = path.join(__dirname, "../../data/dis.dat");
 
@@ -39,24 +40,22 @@ function __promiseArray(arr, fn) {
   }, Promise.resolve([]));
 }
 
-function updateDis() {
-  disUpdateBtn.disabled = true;
-  let c_loc = [];
-  let locList = mapLocTable.getLocList();
-  for(let i = 0; i < locList.length; ++i) {
-    c_loc.push(...locList.slice(i+1).map((_l) => {
-      return [locList[i], _l];
-    }));
-  }
+function updateDis(locList, newLoc, callback) {
+  // disUpdateBtn.disabled = true;
+  // let c_loc = [];
+  // let locList = mapLocTable.getLocList();
+  // for(let i = 0; i < locList.length; ++i) {
+    // c_loc.push(...locList.slice(i+1).map((_l) => {
+      // return [locList[i], _l];
+    // }));
+  // }
+  let c_loc = locList.map((loc) => {
+    return [loc, newLoc];
+  });
   let c_loc_slice = [];
   for(let i = 0; i < c_loc.length; i += 5) {
     c_loc_slice.push(c_loc.slice(i, i+5));
   }
-  /* Promise.all(c_loc_slice.map((_c_loc) => {
-    return Promise.all(_c_loc.map((locSet) => {
-      return map.dis_query(locSet[0], locSet[1]);
-    }));
-  })) */
   __promiseArray(c_loc_slice, (_c_loc, _l_values) => {
     return Promise.all(_c_loc.map((locSet) => {
       return map.dis_query(locSet[0], locSet[1]);
@@ -66,17 +65,19 @@ function updateDis() {
       return Promise.resolve(_l_values.concat([9999,9999,9999,9999,9999]));
     });
   }).then((values) => {
-    // disCache = [].concat.apply([], values);
-    disCache = values;
-    disSave();
+    // disCache = values;
+    // disSave();
+    db.insertDistance(values);
+    disCache.push(values);
     alert("Update completed!");
-    disUpdateBtn.disabled = false;
+    // disUpdateBtn.disabled = false;
   }).catch((reason) => {
     console.log(reason);
     alert("Error happen!");
-    disUpdateBtn.disabled = false;
+    // disUpdateBtn.disabled = false;
   });
 }
+exports.updateDis = updateDis;
 
 function clearTable() {
   while(disTable.rows.length > 1) {
