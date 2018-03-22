@@ -6,7 +6,7 @@ const locTable = document.getElementById('loc-table');
 
 const dataPath = path.join(__dirname, "../../data");
 const locFilePath = path.join(__dirname, "../../data/loc.dat");
-// const mapSearch = require(path.join(__dirname, "./map-search.js"));
+const loaderLayer = document.querySelector('.loader-layer');
 
 let locCache = null;
 
@@ -77,8 +77,10 @@ exports.addRow = addRow;
 
 ipc.on('loc-select-reply', (evt, row) => {
   // update distance
+  loaderLayer.classList.remove('is-hidden');
   const mapSearch = require(path.join(__dirname, "./map-search.js"));
   mapSearch.updateDis(locCache, row, (err) => {
+    loaderLayer.classList.add('is-hidden');
     if(err) {
       return ;
     }

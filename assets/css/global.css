@@ -162,3 +162,10 @@ kbd {
 .hljs:active {
   outline: 1px solid transparent;
 }
+
+/* Added */
+
+.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+}
