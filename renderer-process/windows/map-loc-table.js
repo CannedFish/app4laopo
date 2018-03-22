@@ -6,7 +6,7 @@ const locTable = document.getElementById('loc-table');
 
 const dataPath = path.join(__dirname, "../../data");
 const locFilePath = path.join(__dirname, "../../data/loc.dat");
-// const mapSearch = require(path.join(__dirname, "./map-search.js"));
+const loaderLayer = document.querySelector('.loader-layer');
 
 let locCache = null;
 
@@ -52,13 +52,17 @@ function addRow(loc) {
   
   let actionCell = row.insertCell();
   let editBtn = document.createElement('button');
-  editBtn.innerHTML = "edit";
+  editBtn.innerHTML = '<i class="fa fa-edit" aria-hidden="true"></i>';
+  editBtn.title = "Edit";
+  editBtn.classList.add("icon-button");
   editBtn.addEventListener('click', (e) => {
     ipc.send('edit-show', loc, row.rowIndex, locCache.indexOf(loc));
   });
   actionCell.appendChild(editBtn);
   let deleteBtn = document.createElement('button');
-  deleteBtn.innerHTML = "delete";
+  deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+  deleteBtn.title = "Delete";
+  deleteBtn.classList.add("icon-button");
   deleteBtn.addEventListener('click', (e) => {
     // TODO: need a confirm
     // update distance database
@@ -77,8 +81,10 @@ exports.addRow = addRow;
 
 ipc.on('loc-select-reply', (evt, row) => {
   // update distance
+  loaderLayer.classList.remove('is-hidden');
   const mapSearch = require(path.join(__dirname, "./map-search.js"));
   mapSearch.updateDis(locCache, row, (err) => {
+    loaderLayer.classList.add('is-hidden');
     if(err) {
       return ;
     }
@@ -86,8 +92,10 @@ ipc.on('loc-select-reply', (evt, row) => {
     locCacheSave();
   });
 }).on('edit-confirm-reply', (evt, loc, tableIdx, cacheIdx) => {
+  let oldEnTitle = locCache[cacheIdx].enTitle;
   locCache[cacheIdx].enTitle = loc.enTitle;
   locCacheSave();
+  require(path.join(__dirname, "./map-search.js")).updateDisTitle(loc, oldEnTitle);
 
   let row = locTable.rows[tableIdx];
   row.deleteCell(1);

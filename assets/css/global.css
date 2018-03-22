@@ -72,6 +72,10 @@ td {
   border-width: 1px 0 0 1px;
 }
 
+tr:hover {
+  background: #f3f6fa;
+}
+
 svg {
   fill: currentColor;
 }
@@ -161,4 +165,11 @@ kbd {
 .hljs:hover,
 .hljs:active {
   outline: 1px solid transparent;
+}
+
+/* Added */
+
+.is-hidden {
+  visibility: hidden;
+  opacity: 0;
 }

@@ -7,7 +7,32 @@
   padding: .5em 1.5em;
 }
 
+.input-text {
+  outline: none;
+  border-color: hsla(0,0%,0%,.08);
+  vertical-align: middle;
+  font-size: 25px;
+  width: 60%;
+}
+
+.input-search-icon {
+  position: relative;
+  left: -40px;
+  vertical-align: middle;
+  font-size: 25px;
+}
+.input-search-icon:active {
+  font-size: 20px;
+}
+
 #selection tr:hover {
   background: #f3f6fa;
+}
+
+.icon-button {
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  background-color: transparent;
 }
 
