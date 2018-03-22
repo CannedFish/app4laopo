@@ -6,6 +6,7 @@ const locTable = document.getElementById('loc-table');
 
 const dataPath = path.join(__dirname, "../../data");
 const locFilePath = path.join(__dirname, "../../data/loc.dat");
+// const mapSearch = require(path.join(__dirname, "./map-search.js"));
 
 let locCache = null;
 
@@ -60,6 +61,8 @@ function addRow(loc) {
   deleteBtn.innerHTML = "delete";
   deleteBtn.addEventListener('click', (e) => {
     // TODO: need a confirm
+    // update distance database
+    require(path.join(__dirname, "./map-search.js")).removeDis(loc);
     locTable.deleteRow(row.rowIndex);
     locCache.splice(locCache.indexOf(loc), 1);
     // console.log(locCache);
@@ -73,8 +76,15 @@ function addRow(loc) {
 exports.addRow = addRow;
 
 ipc.on('loc-select-reply', (evt, row) => {
-  addRow(row);
-  locCacheSave();
+  // update distance
+  const mapSearch = require(path.join(__dirname, "./map-search.js"));
+  mapSearch.updateDis(locCache, row, (err) => {
+    if(err) {
+      return ;
+    }
+    addRow(row);
+    locCacheSave();
+  });
 }).on('edit-confirm-reply', (evt, loc, tableIdx, cacheIdx) => {
   locCache[cacheIdx].enTitle = loc.enTitle;
   locCacheSave();

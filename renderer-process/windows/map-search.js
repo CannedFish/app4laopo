@@ -3,12 +3,13 @@ const fs = require('fs');
 
 const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
 const map = require(path.join(__dirname, "./map-initialize.js"));
+const db = require(path.join(__dirname, "../../main-process/windows/db.js"));
 
 const disFilePath = path.join(__dirname, "../../data/dis.dat");
 
 const searchInput = document.getElementById('route-dis');
 const searchBtn = document.getElementById('route-search');
-const disUpdateBtn = document.getElementById('dis-update');
+// const disUpdateBtn = document.getElementById('dis-update');
 const disTable = document.getElementById('search-result-table');
 
 let disCache = null;
@@ -22,12 +23,17 @@ function disSave() {
 }
 
 function disLoad() {
-  fs.readFile(disFilePath, 'utf8', (err, data) => {
-    if(err) {
-      disCache = [];
-      return ;
-    }
-    disCache = JSON.parse(data);
+  // fs.readFile(disFilePath, 'utf8', (err, data) => {
+    // if(err) {
+      // disCache = [];
+      // return ;
+    // }
+    // disCache = JSON.parse(data);
+  // });
+  db.getDistance((err, rows) => {
+    disCache = rows.map((row) => {
+      return [row.src, row.dst, row.dis];
+    });
   });
 }
 
@@ -39,24 +45,22 @@ function __promiseArray(arr, fn) {
   }, Promise.resolve([]));
 }
 
-function updateDis() {
-  disUpdateBtn.disabled = true;
-  let c_loc = [];
-  let locList = mapLocTable.getLocList();
-  for(let i = 0; i < locList.length; ++i) {
-    c_loc.push(...locList.slice(i+1).map((_l) => {
-      return [locList[i], _l];
-    }));
-  }
+function updateDis(locList, newLoc, callback) {
+  // disUpdateBtn.disabled = true;
+  // let c_loc = [];
+  // let locList = mapLocTable.getLocList();
+  // for(let i = 0; i < locList.length; ++i) {
+    // c_loc.push(...locList.slice(i+1).map((_l) => {
+      // return [locList[i], _l];
+    // }));
+  // }
+  let c_loc = locList.map((loc) => {
+    return [loc, newLoc];
+  });
   let c_loc_slice = [];
   for(let i = 0; i < c_loc.length; i += 5) {
     c_loc_slice.push(c_loc.slice(i, i+5));
   }
-  /* Promise.all(c_loc_slice.map((_c_loc) => {
-    return Promise.all(_c_loc.map((locSet) => {
-      return map.dis_query(locSet[0], locSet[1]);
-    }));
-  })) */
   __promiseArray(c_loc_slice, (_c_loc, _l_values) => {
     return Promise.all(_c_loc.map((locSet) => {
       return map.dis_query(locSet[0], locSet[1]);
@@ -66,16 +70,26 @@ function updateDis() {
       return Promise.resolve(_l_values.concat([9999,9999,9999,9999,9999]));
     });
   }).then((values) => {
-    // disCache = [].concat.apply([], values);
-    disCache = values;
-    disSave();
+    // disCache = values;
+    // disSave();
+    db.insertDistance(values);
+    Array.prototype.push.apply(disCache, values);
     alert("Update completed!");
-    disUpdateBtn.disabled = false;
+    callback(null);
+    // disUpdateBtn.disabled = false;
   }).catch((reason) => {
     console.log(reason);
     alert("Error happen!");
-    disUpdateBtn.disabled = false;
+    // disUpdateBtn.disabled = false;
+    callback(reason);
   });
+}
+exports.updateDis = updateDis;
+
+exports.removeDis = (loc) => {
+  let _loc = typeof(loc.enTitle) === 'undefined' ? loc.title : `${loc.title}<br>${loc.enTitle}`;
+  db.deleteDistance(_loc);
+  disLoad();
 }
 
 function clearTable() {
@@ -110,9 +124,9 @@ function search(target) {
 }
 
 function eventInit() {
-  disUpdateBtn.addEventListener('click', (evt) => {
-    updateDis();
-  });
+  // disUpdateBtn.addEventListener('click', (evt) => {
+    // updateDis();
+  // });
 
   searchBtn.addEventListener('click', (evt) => {
     if(searchInput.value == '') {
