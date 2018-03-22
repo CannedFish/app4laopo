@@ -27,3 +27,8 @@ exports.getDistance = (callback) => {
   db.all("SELECT * FROM distance", callback);
 }
 
+exports.updateDistanceTitle = (oldTitle, newTilte) => {
+  db.run("UPDATE distance SET src=? where src=?", newTilte, oldTitle);
+  db.run("UPDATE distance SET dst=? where dst=?", newTilte, oldTitle);
+}
+

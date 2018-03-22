@@ -92,6 +92,13 @@ exports.removeDis = (loc) => {
   disLoad();
 }
 
+exports.updateDisTitle = (loc, oldEnTitle) => {
+  let newTilte = `${loc.title}<br>${loc.enTitle}`;
+  let oldTitle = typeof(oldEnTitle) === 'undefined' ? loc.title : `${loc.title}<br>${oldEnTitle}`;
+  db.updateDistanceTitle(oldTitle, newTilte);
+  disLoad();
+}
+
 function clearTable() {
   while(disTable.rows.length > 1) {
     disTable.deleteRow(-1);
@@ -123,17 +130,27 @@ function search(target) {
   });
 }
 
+function __search() {
+  if(searchInput.value == '') {
+    alert("Please input the target distance");
+    return ;
+  }
+  search(searchInput.value);
+}
+
 function eventInit() {
   // disUpdateBtn.addEventListener('click', (evt) => {
     // updateDis();
   // });
 
   searchBtn.addEventListener('click', (evt) => {
-    if(searchInput.value == '') {
-      alert("Please input the target distance");
-      return ;
+    __search();
+  });
+
+  searchInput.addEventListener('keypress', (evt) => {
+    if(evt.key == 'Enter') {
+      __search();
     }
-    search(searchInput.value);
   });
 }
 

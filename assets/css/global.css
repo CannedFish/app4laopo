@@ -72,6 +72,10 @@ td {
   border-width: 1px 0 0 1px;
 }
 
+tr:hover {
+  background: #f3f6fa;
+}
+
 svg {
   fill: currentColor;
 }

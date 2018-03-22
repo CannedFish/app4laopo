@@ -12,31 +12,31 @@ const searchBtn = document.getElementById('map-search');
 let map = null;
 
 function mapSearch(callback) {
-  if(locInput.value == '') {
-    alert("Please input a localtion name.");
-  } else {
-    let options = {
-      onSearchComplete: (rs) => {
-        if(local.getStatus() == BMAP_STATUS_SUCCESS) {
-          callback(rs);
-        }
+  let options = {
+    onSearchComplete: (rs) => {
+      if(local.getStatus() == BMAP_STATUS_SUCCESS) {
+        callback(rs);
       }
-    };
-    let local = new BMap.LocalSearch(map, options);
-    local.search(locInput.value);
-  }
+    }
+  };
+  let local = new BMap.LocalSearch(map, options);
+  local.search(locInput.value);
 }
 
 function searchLoc() {
-  searchBtn.disabled = true;
-  mapSearch((rs) => {
-    let data = [];
-    for(let i = 0; i < rs.getCurrentNumPois(); i++) {
-      data.push(rs.getPoi(i));
-    }
-    ipc.send('select-show', data);
-    searchBtn.disabled = false;
-  });
+  if(locInput.value == '') {
+    alert("Please input a localtion name.");
+  } else {
+    searchBtn.disabled = true;
+    mapSearch((rs) => {
+      let data = [];
+      for(let i = 0; i < rs.getCurrentNumPois(); i++) {
+        data.push(rs.getPoi(i));
+      }
+      ipc.send('select-show', data);
+      searchBtn.disabled = false;
+    });
+  }
 }
 
 exports.evt_init = () => {
