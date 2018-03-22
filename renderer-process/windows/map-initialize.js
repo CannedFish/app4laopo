@@ -6,7 +6,7 @@ const ipc = require('electron').ipcRenderer;
 const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
 
 const locInput = document.getElementById('map-loc');
-const searchAddBtn = document.getElementById('map-search-add');
+// const searchAddBtn = document.getElementById('map-search-add');
 const searchBtn = document.getElementById('map-search');
 
 let map = null;
@@ -27,26 +27,36 @@ function mapSearch(callback) {
   }
 }
 
-exports.evt_init = () => {
-  searchAddBtn.addEventListener('click', (e) => {
-    mapSearch((rs) => {
-      for(let i = 0; i < rs.getCurrentNumPois(); i++) {
-        mapLocTable.addRow(rs.getPoi(i));
-      }
-      mapLocTable.save();
-    });
+function searchLoc() {
+  searchBtn.disabled = true;
+  mapSearch((rs) => {
+    let data = [];
+    for(let i = 0; i < rs.getCurrentNumPois(); i++) {
+      data.push(rs.getPoi(i));
+    }
+    ipc.send('select-show', data);
+    searchBtn.disabled = false;
   });
+}
+
+exports.evt_init = () => {
+  /* searchAddBtn.addEventListener('click', (e) => { */
+    // mapSearch((rs) => {
+      // for(let i = 0; i < rs.getCurrentNumPois(); i++) {
+        // mapLocTable.addRow(rs.getPoi(i));
+      // }
+      // mapLocTable.save();
+    // });
+  /* }); */
 
   searchBtn.addEventListener('click', (e) => {
-    searchBtn.disabled = true;
-    mapSearch((rs) => {
-      let data = [];
-      for(let i = 0; i < rs.getCurrentNumPois(); i++) {
-        data.push(rs.getPoi(i));
-      }
-      ipc.send('select-show', data);
-      searchBtn.disabled = false;
-    });
+    searchLoc();
+  });
+
+  locInput.addEventListener('keypress', (evt) => {
+    if(evt.key == "Enter") {
+      searchLoc();
+    }
   });
 };
 
@@ -57,17 +67,21 @@ exports.map_init = (_map) => {
 const re = /[\d.]+/;
 exports.dis_query = (src, dst) => {
   return new Promise((resolve, reject) => {
-    let transit = new BMap.DrivingRoute(map, {
-      onSearchComplete: (rs) => {
-        resolve([
-          typeof(src.enTitle) === 'undefined' ? src.title : `${src.title}<br>${src.enTitle}`,
-          typeof(dst.enTitle) === 'undefined' ? dst.title : `${dst.title}<br>${dst.enTitle}`, 
-          // Number(re.exec(rs.getPlan(0).getDistance(true))[0])
-          rs.taxiFare == null ? 0 : rs.taxiFare.distance / 1000
-        ]);
-      }
-    });
-    transit.search(src, dst);
+    try {
+      let transit = new BMap.DrivingRoute(map, {
+        onSearchComplete: (rs) => {
+          resolve([
+            typeof(src.enTitle) === 'undefined' ? src.title : `${src.title}<br>${src.enTitle}`,
+            typeof(dst.enTitle) === 'undefined' ? dst.title : `${dst.title}<br>${dst.enTitle}`, 
+            // Number(re.exec(rs.getPlan(0).getDistance(true))[0])
+            rs.taxiFare == null ? 0 : rs.taxiFare.distance / 1000
+          ]);
+        }
+      });
+      transit.search(src, dst);
+    } catch(e) {
+      reject(e);
+    }
   });
 };
 

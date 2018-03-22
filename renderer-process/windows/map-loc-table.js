@@ -61,7 +61,8 @@ function addRow(loc) {
   deleteBtn.innerHTML = "delete";
   deleteBtn.addEventListener('click', (e) => {
     // TODO: need a confirm
-    // TODO: update distance database
+    // update distance database
+    require(path.join(__dirname, "./map-search.js")).removeDis(loc);
     locTable.deleteRow(row.rowIndex);
     locCache.splice(locCache.indexOf(loc), 1);
     // console.log(locCache);

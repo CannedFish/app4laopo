@@ -9,7 +9,7 @@ const disFilePath = path.join(__dirname, "../../data/dis.dat");
 
 const searchInput = document.getElementById('route-dis');
 const searchBtn = document.getElementById('route-search');
-const disUpdateBtn = document.getElementById('dis-update');
+// const disUpdateBtn = document.getElementById('dis-update');
 const disTable = document.getElementById('search-result-table');
 
 let disCache = null;
@@ -73,7 +73,7 @@ function updateDis(locList, newLoc, callback) {
     // disCache = values;
     // disSave();
     db.insertDistance(values);
-    disCache.push(values);
+    Array.prototype.push.apply(disCache, values);
     alert("Update completed!");
     callback(null);
     // disUpdateBtn.disabled = false;
@@ -85,6 +85,12 @@ function updateDis(locList, newLoc, callback) {
   });
 }
 exports.updateDis = updateDis;
+
+exports.removeDis = (loc) => {
+  let _loc = typeof(loc.enTitle) === 'undefined' ? loc.title : `${loc.title}<br>${loc.enTitle}`;
+  db.deleteDistance(_loc);
+  disLoad();
+}
 
 function clearTable() {
   while(disTable.rows.length > 1) {
