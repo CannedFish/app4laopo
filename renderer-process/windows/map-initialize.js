@@ -8,6 +8,7 @@ const mapLocTable = require(path.join(__dirname, "./map-loc-table.js"));
 const locInput = document.getElementById('map-loc');
 // const searchAddBtn = document.getElementById('map-search-add');
 const searchBtn = document.getElementById('map-search');
+const mapLocImportBtn = document.querySelector('#map-loc-import');
 
 let map = null;
 
@@ -57,6 +58,10 @@ exports.evt_init = () => {
     if(evt.key == "Enter") {
       searchLoc();
     }
+  });
+
+  mapLocImportBtn.addEventListener('click', (e) => {
+    ipc.send('data-import-show');
   });
 };
 
