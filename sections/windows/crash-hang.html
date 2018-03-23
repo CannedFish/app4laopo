@@ -25,11 +25,28 @@
     <div class="demo">
       <div class="demo-wrapper">
         <div class="map-content">
+          <input id="endpoint" type="text" placeholder="Source or destination point">
+          <div id="end-drop-down" class="is-hidden">
+            <ul id="end-option"></ul>
+          </div>
+          <button id='src-check' class="icon-button">
+            <i class="fa fa-dot-circle-o" aria-hidden="true"></i> source
+          </button>
+          <button id='dst-check' class="icon-button">
+            <i class="fa fa-circle-o" aria-hidden="true"></i> destination
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-wrapper">
+        <div class="map-content">
           <table id="search-result-table">
             <thead>
               <tr>
                 <th>Source</th>
-                <th>Target</th>
+                <th>Destination</th>
                 <th>Distance(KM)</th>
                 <th>Error(KM)</th>
               </tr>

@@ -113,9 +113,19 @@ function addRow(re) {
   });
 };
 
+function __searchFilter() {
+  if(endpointInput.value != "") {
+    return disCache.filter((dis) => {
+      return dis[0].includes(endpointInput.value) || dis[1].includes(endpointInput.value);
+    });
+  }
+  return disCache;
+}
+
 function search(target) {
   clearTable();
-  disCache.map((dis) => {
+  let candidate = null;
+  __searchFilter(disCache).map((dis) => {
     return [dis[0], dis[1], dis[2], Math.round(Math.abs(dis[2]-target)*1000)/1000];
   }).sort((a, b) => {
     if(a[3] < b[3]) {
@@ -138,6 +148,31 @@ function __search() {
   search(searchInput.value);
 }
 
+// End points options
+const endpointInput = document.querySelector('#endpoint');
+const endDropDown = document.querySelector('#end-drop-down');
+const endSelectOption = document.querySelector('#end-option');
+let endOptions = [];
+
+function showOption(options) {
+  endSelectOption.innerHTML = options.map((opt) => {
+    return `<li>${opt}</li>`;
+  }).join('');
+  endSelectOption.querySelectorAll("li").forEach((e) => {
+    e.addEventListener('mouseover', (evt) => {
+      evt.stopPropagation();
+      endpointInput.value = evt.target.innerHTML;
+    });
+  });
+}
+
+function optionInit() {
+  endOptions = require(path.join(__dirname, "./map-loc-table.js")).getLocList().map((loc) => {
+    return loc.title;
+  });
+}
+
+// events
 function eventInit() {
   // disUpdateBtn.addEventListener('click', (evt) => {
     // updateDis();
@@ -150,6 +185,26 @@ function eventInit() {
   searchInput.addEventListener('keypress', (evt) => {
     if(evt.key == 'Enter') {
       __search();
+    }
+  });
+
+  // End point select
+  endpointInput.addEventListener('focus', (evt) => {
+    endDropDown.classList.remove("is-hidden");
+    optionInit();
+    showOption(endOptions);
+  });
+  endpointInput.addEventListener('blur', (evt) => {
+    endDropDown.classList.add("is-hidden");
+  });
+  endpointInput.addEventListener('input', (evt) => {
+    evt.stopPropagation();
+    if(endpointInput.value == '') {
+      showOption(endOptions);
+    } else {
+      showOption(endOptions.filter((opt) => {
+        return opt.includes(endpointInput.value);
+      }));
     }
   });
 }
