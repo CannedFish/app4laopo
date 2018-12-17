@@ -20,12 +20,28 @@ def _batch_create(hospitals):
     db.session.commit()
     return ret
 
+def _delete(hospital_id):
+    hospital = Hospital.get(hospital_id)
+    if hospital is not None:
+        db.session.delete(hospital)
+        db.session.commit()
+    return hospital
+
+def _update(hospital_id, data):
+    hospital = Hospital.get(hospital_id)
+    if hospital is not None:
+        for key in [_ for _ in data if _ not in ['id', 'pub_date']]:
+            setattr(hospital, key, data[key])
+        db.session.commit()
+    return hospital
+
 class Hospital(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     name_ch = db.Column(db.String(256), unique=True, nullable=False)
     name_en = db.Column(db.String(256), unique=True, nullable=True)
     address = db.Column(db.String(256), unique=True, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    distances = db.relationship('Distance', backref='hospital', lazy=True)
 
     def __repr__(self):
         return '<Hospital %r, %r(%r), %r, %r>' % \
@@ -42,6 +58,14 @@ class Hospital(db.Model):
     @classmethod
     def create(cls, hospitals):
         return _batch_create(hospitals)
+
+    @classmethod
+    def delete(cls, hospital_id):
+        return _delete(hospital_id)
+
+    @classmethod
+    def update(cls, hospital_id, data):
+        return _update(hospital_id, data)
 
     def to_dict(self):
         return {
