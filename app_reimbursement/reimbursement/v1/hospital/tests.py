@@ -15,12 +15,16 @@ class HospitalTest(unittest.TestCase):
                 {
                     'name_ch': 'A医院',
                     'name_en': 'A hospital',
-                    'address': 'Some where A'
+                    'address': 'Some where A',
+                    'lng': 40.45,
+                    'lat': 116.34
                 },
                 {
                     'name_ch': 'B医院',
                     'name_en': 'B hospital',
-                    'address': 'Some where B'
+                    'address': 'Some where B',
+                    'lng': 40.35,
+                    'lat': 116.46
                 }
             ]
         }
@@ -48,7 +52,9 @@ class HospitalTest(unittest.TestCase):
             'id': hospital_id,
             'name_ch': hospital_id + u'医院',
             'name_en': '%s hospital new' % hospital_id,
-            'address': 'Some where %s new' % hospital_id
+            'address': 'Some where %s new' % hospital_id,
+            'lng': 40.35,
+            'lat': 116.46
         }
         url = self.base + '/' + hospital_id
         headers = {

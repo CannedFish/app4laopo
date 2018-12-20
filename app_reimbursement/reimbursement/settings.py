@@ -30,3 +30,6 @@ class TestingConfig(Config):
 
 cur_config = DevelopmentConfig
 
+# Baidu SDK
+KEY = "wnoBRxPcG46KAcnNEY5kIlOE9TmvBDnE"
+

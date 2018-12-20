@@ -14,7 +14,9 @@ def _batch_create(hospitals):
         h = Hospital(id=str(uuid.uuid4())
             , name_ch=hospital['name_ch']
             , name_en=hospital['name_en']
-            , address=hospital['address'])
+            , address=hospital['address']
+            , lng=hospital['lng']
+            , lat=hospital['lat'])
         db.session.add(h)
         ret['hospitals'].append(h)
     db.session.commit()
@@ -41,7 +43,8 @@ class Hospital(db.Model):
     name_en = db.Column(db.String(256), unique=True, nullable=True)
     address = db.Column(db.String(256), unique=True, nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    distances = db.relationship('Distance', backref='hospital', lazy=True)
+    lng = db.Column(db.Float, nullable=False)
+    lat = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return '<Hospital %r, %r(%r), %r, %r>' % \
@@ -73,6 +76,8 @@ class Hospital(db.Model):
             'name_ch': self.name_ch,
             'name_en': self.name_en,
             'address': self.address,
-            'pub_date': str(self.pub_date)
+            'pub_date': str(self.pub_date),
+            'lng': self.lng,
+            'lat': self.lat
         }
 
