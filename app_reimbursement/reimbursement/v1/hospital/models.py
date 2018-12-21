@@ -1,14 +1,15 @@
 # -*- coding: utf8 -*-
-
 import logging
 import uuid
 from datetime import datetime
 
 from reimbursement.database import db
+from reimbursement.v1.distance.utils import trans_new_hospital_to_distance
 
 LOG = logging.getLogger(__name__)
 
 def _batch_create(hospitals):
+    old = Hospital.list()
     ret = {'hospitals': []}
     for hospital in hospitals['hospitals']:
         h = Hospital(id=str(uuid.uuid4())
@@ -20,6 +21,7 @@ def _batch_create(hospitals):
         db.session.add(h)
         ret['hospitals'].append(h)
     db.session.commit()
+    trans_new_hospital_to_distance(ret['hospitals'], old)
     return ret
 
 def _delete(hospital_id):

@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 import logging
 
 from flask_restplus import Namespace, Resource\
@@ -9,8 +9,8 @@ from .models import Distance as DistanceModel
 
 LOG = logging.getLogger(__name__)
 
-api = Namespace('disks'
-        , description='Disks related operations'
+api = Namespace('distance'
+        , description='Distances related operations'
         , path='/distance')
 
 api.models[distance.name] = distance
