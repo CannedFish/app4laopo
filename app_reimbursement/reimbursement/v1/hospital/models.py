@@ -5,6 +5,7 @@ from datetime import datetime
 
 from reimbursement.database import db
 from reimbursement.v1.distance.utils import trans_new_hospital_to_distance
+from reimbursement.v1.distance.models import Distance
 
 LOG = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ def _delete(hospital_id):
     if hospital is not None:
         db.session.delete(hospital)
         db.session.commit()
+        Distance.delete(hospital_id)
     return hospital
 
 def _update(hospital_id, data):
