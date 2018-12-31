@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from app4laopo.auth import login_required
 from app4laopo.db import get_db
 
-bp = Blueprint('blog', __name__, url_prefix='/blog')
+bp = Blueprint('reimbursement', __name__, url_prefix='/reimbursement')
 
 
 @bp.route('/')

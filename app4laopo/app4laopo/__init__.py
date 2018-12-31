@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -31,9 +31,9 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # apply the blueprints to the app
-    from app4laopo import auth, blog
+    from app4laopo import auth, reimbursement
     app.register_blueprint(auth.bp)
-    app.register_blueprint(blog.bp)
+    app.register_blueprint(reimbursement.bp)
 
     @app.route('/')
     def index():
