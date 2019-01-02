@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block head %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='src/reimbursement/app.css') }}" rel="stylesheet">
+{% endblock%}
+{% block title %}Reimbursement{% endblock %}
+{% block content %}
+  <div class="page-header">
+    <h1>Reimbursement</h1>
+  </div>
+  <div id="nav-tabs">
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" id="search-tab-btn" v-bind:class="{active: searchTab}"><a href="#" v-on:click="toggle(0, $event)">Search</a></li>
+      <li role="presentation" id="mgt-tab-btn" v-bind:class="{active: mgtTab}"><a href="#" v-on:click="toggle(1, $event)">Management</a></li>
+    </ul>
+    <div id="search-tab" class="content-tab" v-bind:class="{hidden: !searchTab}">
+      <div class="row">
+        <div class="form-group col-md-4 col-xs-12">
+          <label class="sr-only" for="search-input">Search Input</label>
+          <input type="text" class="form-control" id="search-input" placeholder="Target distance(KM)" style="width:100%;">
+        </div>
+        <div class="form-group col-md-4 col-xs-12">
+          <label class="sr-only" for="hospital">Hospital Name</label>
+          <input type="text" class="form-control" id="hospital" placeholder="Hospital Name">
+        </div>
+        <div class="form-group col-md-2 col-xs-12">
+          <label class="radio-inline">
+            <input type="radio" name="hospitalOptions" id="src" value="src" checked> source
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="hospitalOptions" id="dst" value="dst"> destination
+          </label>
+        </div>
+        <div class="col-md-1 col-xs-12">
+          <button class="btn btn-default center-block">Search</button>
+        </div>
+      </div>
+    </div>
+    <div id="management-tab" class="content-tab" v-bind:class="{hidden: !mgtTab}">
+      <h2>Management Tab</h2>
+    </div>
+  </div>
+{% endblock %}
+{% block import %}
+  <script src="{{ url_for('static', filename='src/reimbursement/app.js') }}"></script>
+{% endblock %}
