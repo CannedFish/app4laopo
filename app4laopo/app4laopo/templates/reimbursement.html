@@ -13,11 +13,12 @@
       <li role="presentation" id="search-tab-btn" v-bind:class="{active: searchTab}"><a href="#" v-on:click="toggle(0, $event)">Search</a></li>
       <li role="presentation" id="mgt-tab-btn" v-bind:class="{active: mgtTab}"><a href="#" v-on:click="toggle(1, $event)">Management</a></li>
     </ul>
+
     <div id="search-tab" class="content-tab" v-bind:class="{hidden: !searchTab}">
       <div class="row">
         <div class="form-group col-md-4 col-xs-12">
           <label class="sr-only" for="search-input">Search Input</label>
-          <input type="text" class="form-control" id="search-input" placeholder="Target distance(KM)" style="width:100%;">
+          <input type="text" class="form-control" id="search-input" placeholder="Target distance(KM)" v-model="targetDistance">
         </div>
         <div class="form-group col-md-4 col-xs-12">
           <label class="sr-only" for="hospital">Hospital Name</label>
@@ -32,12 +33,65 @@
           </label>
         </div>
         <div class="col-md-1 col-xs-12">
-          <button class="btn btn-default center-block">Search</button>
+          <button class="btn btn-primary center-block" v-on:click="searchAction">Search</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-xs-12">
+          <table class="table table-hover table-condensed" id="result">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>From</th>
+                <th>From(EN)</th>
+                <th>To</th>
+                <th>To(EN)</th>
+                <th>Mistakes(KM)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(re, idx) in results">
+                <td>{[{ idx }]}</td>
+                <td>{[{ re.src.name_ch }]}</td>
+                <td>{[{ re.src.name_en }]}</td>
+                <td>{[{ re.dst.name_ch }]}</td>
+                <td>{[{ re.dst.name_en }]}</td>
+                <td>{[{ re.distance }]}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+
     <div id="management-tab" class="content-tab" v-bind:class="{hidden: !mgtTab}">
-      <h2>Management Tab</h2>
+      <div class="row">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+          Search
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Modal content
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
