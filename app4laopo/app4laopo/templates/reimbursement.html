@@ -9,9 +9,9 @@
     <h1>Reimbursement</h1>
   </div>
   <div id="nav-tabs">
-    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" id="search-tab-btn" v-bind:class="{active: searchTab}"><a href="#" v-on:click="toggle(0, $event)">Search</a></li>
-      <li role="presentation" id="mgt-tab-btn" v-bind:class="{active: mgtTab}"><a href="#" v-on:click="toggle(1, $event)">Management</a></li>
+    <ul class="nav nav-tabs">
+      <li id="search-tab-btn" class="nav-item"><a class="nav-link" v-bind:class="{active: searchTab}" href="#" v-on:click="toggle(0, $event)">Search</a></li>
+      <li id="mgt-tab-btn" class="nav-item"><a class="nav-link" v-bind:class="{active: mgtTab}" href="#" v-on:click="toggle(1, $event)">Management</a></li>
     </ul>
 
     <div id="search-tab" class="content-tab" v-bind:class="{hidden: !searchTab}">
@@ -24,34 +24,36 @@
           <label class="sr-only" for="hospital">Hospital Name</label>
           <input type="text" class="form-control" id="hospital" placeholder="Hospital Name">
         </div>
-        <div class="form-group col-md-2 col-xs-12">
-          <label class="radio-inline">
-            <input type="radio" name="hospitalOptions" id="src" value="src" checked> source
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="hospitalOptions" id="dst" value="dst"> destination
-          </label>
+        <div class="form-group col-md-1 col-xs-12">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="src-radio" value="src" checked>
+            <label class="form-check-label" for="src-radio">source</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="dst-radio" value="dst">
+            <label class="form-check-label" for="dst-radio">destination</label>
+          </div>
         </div>
-        <div class="col-md-1 col-xs-12">
+        <div class="form-group col-md-2 col-xs-12">
           <button class="btn btn-primary center-block" v-on:click="searchAction">Search</button>
         </div>
       </div>
       <div class="row">
         <div class="col-md-8 col-xs-12">
-          <table class="table table-hover table-condensed" id="result">
+          <table class="table table-hover table-sm" id="result">
             <thead>
               <tr>
-                <th>#</th>
-                <th>From</th>
-                <th>From(EN)</th>
-                <th>To</th>
-                <th>To(EN)</th>
-                <th>Mistakes(KM)</th>
+                <th scope="col">#</th>
+                <th scope="col">From</th>
+                <th scope="col">From(EN)</th>
+                <th scope="col">To</th>
+                <th scope="col">To(EN)</th>
+                <th scope="col">Mistakes(KM)</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(re, idx) in results">
-                <td>{[{ idx }]}</td>
+                <th scope="row">{[{ idx }]}</th>
                 <td>{[{ re.src.name_ch }]}</td>
                 <td>{[{ re.src.name_en }]}</td>
                 <td>{[{ re.dst.name_ch }]}</td>
@@ -66,33 +68,82 @@
 
     <div id="management-tab" class="content-tab" v-bind:class="{hidden: !mgtTab}">
       <div class="row">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-          Search
-        </button>
+        <div class="form-group col-md-4 col-xs-12">
+          <label class="sr-only" for="hospital-mgt-search">Hospital Name</label>
+          <input type="text" class="form-control" id="hospital-mgt-search" placeholder="Hospital Name" v-model="hospitalName">
+        </div>
+        <div class="form-group col-md-1 col-xs-12">
+          <button class="btn btn-primary center-block" v-on:click="searchHospital">Search</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-xs-12">
+          <table class="table table-hover table-sm">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Name(EN)</th>
+                <th scope="col" class="d-none d-sm-table-cell">Address</th>
+                <th scope="col" class="d-none d-sm-table-cell">Longitude</th>
+                <th scope="col" class="d-none d-sm-table-cell">Latitude</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(h, idx) in getHospitals()" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)">
+                <th scope="row">{[{ idx }]}</th>
+                <td>{[{ h.name_ch }]}</td>
+                <td>{[{ h.name_en }]}</td>
+                <td class="d-none d-sm-table-cell">{[{ h.address }]}</td>
+                <td class="d-none d-sm-table-cell">{[{ h.lng }]}</td>
+                <td class="d-none d-sm-table-cell">{[{ h.lat }]}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Modal content
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-              </div>
+    <!-- Modal -->
+    <div class="modal fade" id="hospitalDetail" tabindex="-1" role="dialog" aria-labelledby="hospitalDetailTitle" aria-hidden="true" v-on:show.bs.modal="handleHospitalDetailShow">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="hospitalDetailTitle">Hospital detail</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="h-name">Name</label>
+              <input v-model="hospitalDetail.name_ch" type="text" class="form-control" id="h-name" placeholder="Name" readonly>
             </div>
+            <div class="form-group">
+              <label for="h-name-en">Name(EN)</label>
+              <input v-model="hospitalDetail.name_en" type="text" class="form-control" id="h-name-en" placeholder="Name(EN)">
+            </div>
+            <div class="form-group">
+              <label for="h-address">Address</label>
+              <input v-model="hospitalDetail.address" type="text" class="form-control" id="h-address" placeholder="Address" readonly>
+            </div>
+            <div class="form-group">
+              <label for="h-lng">Longitude</label>
+              <input v-model="hospitalDetail.lng" type="text" class="form-control" id="h-lng" placeholder="Longitude" readonly>
+            </div>
+            <div class="form-group">
+              <label for="h-lat">Latitude</label>
+              <input v-model="hospitalDetail.lat" type="text" class="form-control" id="h-lat" placeholder="Latitude" readonly>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 {% endblock %}
 {% block import %}
