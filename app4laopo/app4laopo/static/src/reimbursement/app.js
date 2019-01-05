@@ -96,9 +96,20 @@ function _getHospitals() {
 function _searchHospital(evt) {
 }
 
+var idxShown = null;
+var tmpDetail = null;
 function _handleHospitalDetailShow(idx, evt) {
-  console.log(idx, evt.relatedTarget);
+  tmpDetail = Object.assign({}, hospitals[idx]);
   tabs.hospitalDetail = hospitals[idx];
+  idxShown = idx;
+}
+
+function _handleDetailSave() {
+  // TODO: request to update
+}
+
+function _handleDetailCancel() {
+  tabs.hospitalDetail.name_en = tmpDetail.name_en;
 }
 
 var tabs = new Vue({
@@ -125,7 +136,12 @@ var tabs = new Vue({
     // mgt tab
     getHospitals: _getHospitals,
     searchHospital: _searchHospital,
-    handleHospitalDetailShow: _handleHospitalDetailShow
+    handleHospitalDetailShow: _handleHospitalDetailShow,
+    handleDetailSave: _handleDetailSave,
+    handleDetailCancel: _handleDetailCancel
+  },
+  computed: {
+    hospitals: _getHospitals
   }
 });
 

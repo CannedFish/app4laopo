@@ -90,7 +90,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(h, idx) in getHospitals()" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)">
+              <tr v-for="(h, idx) in hospitals" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)">
                 <th scope="row">{[{ idx }]}</th>
                 <td>{[{ h.name_ch }]}</td>
                 <td>{[{ h.name_en }]}</td>
@@ -110,8 +110,8 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="hospitalDetailTitle">Hospital detail</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" v-on:click="handleDetailCancel">
+              <span aria-hidden="true" v-on:click="handleDetailCancel">&times;</span>
             </button>
           </div>
           <div class="modal-body">
@@ -137,8 +137,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="handleDetailCancel">Close</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="handleDetailSave">Save changes</button>
           </div>
         </div>
       </div>
