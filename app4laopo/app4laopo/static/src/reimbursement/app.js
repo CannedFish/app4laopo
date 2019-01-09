@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['{[{', '}]}'];
 
 function _searchAction(evt) {
-  console.log(tabs.targetDistance)
+  console.log(this, tabs.targetDistance)
   tabs.results = [{
     src: {
       name_ch: '甲医院',
@@ -61,36 +61,13 @@ function _searchAction(evt) {
 
 var hospitals = []
 function _getHospitals() {
-  hospitals = [{
-    name_ch: '甲医院',
-    lng: 0,
-    address: '甲路1号',
-    lat: 0,
-    name_en: 'Hospital Jia',
-    id: '33928d323'
-  }, {
-    name_ch: '乙医院',
-    lng: 0,
-    address: '乙路1号',
-    lat: 0,
-    name_en: 'Hospital Yi',
-    id: '33928d320'
-  }, {
-    name_ch: '丙医院',
-    lng: 0,
-    address: '丙路1号',
-    lat: 0,
-    name_en: 'Hospital Bing',
-    id: '33958d320'
-  }, {
-    name_ch: '丁医院',
-    lng: 0,
-    address: '丁路1号',
-    lat: 0,
-    name_en: 'Hospital Ding',
-    id: '33998d320'
-  }];
-  return hospitals;
+  this.$http.get('/reimbursement/hospital').then(res => {
+    console.log(res);
+    hospitals = res.body;
+    this.hospitals = hospitals;
+  }, err => {
+    console.log(err);
+  });
 }
 
 function _searchHospital(evt) {
@@ -121,15 +98,16 @@ var tabs = new Vue({
     targetDistance: '',
     results: [],
     // mgt tab
+    hospitals: [],
     hospitalName: '',
     hospitalDetail: {}
   },
   methods: {
-    toggle: (tabIdx, evt) => {
+    toggle: function (tabIdx, evt) {
       evt.preventDefault();
       evt.stopPropagation();
-      tabs.searchTab = (tabIdx === 0);
-      tabs.mgtTab = (tabIdx === 1);
+      this.searchTab = (tabIdx === 0);
+      this.mgtTab = (tabIdx === 1);
     },
     // search tab
     searchAction: _searchAction,
@@ -140,8 +118,8 @@ var tabs = new Vue({
     handleDetailSave: _handleDetailSave,
     handleDetailCancel: _handleDetailCancel
   },
-  computed: {
-    hospitals: _getHospitals
+  created: function () {
+    _getHospitals.apply(this);
   }
 });
 

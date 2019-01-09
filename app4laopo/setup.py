@@ -19,6 +19,7 @@ with io.open('README.rst', 'rt', encoding='utf8') as f:
         zip_safe=False,
         install_requires=[
             'flask',
+            'requests'
         ],
         extras_require={
             'test': [

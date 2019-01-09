@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+import json
+import requests
+
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, abort, current_app
 )
 from werkzeug.exceptions import abort
 
@@ -7,7 +11,8 @@ from app4laopo.auth import login_required
 from app4laopo.db import get_db
 
 bp = Blueprint('reimbursement', __name__, url_prefix='/reimbursement')
-
+ENDPOINT = "http://127.0.0.1:5000/api/v1"
+LOG = current_app.logger
 
 @bp.route('/')
 def index():
@@ -20,100 +25,123 @@ def index():
     # ).fetchall()
     return render_template('reimbursement.html')
 
+TEST_DATA = [{"name_ch":"甲医院","lng":0,"address":"甲路1号","lat":0,"name_en":"Hospital Jia","id":"33928d323"},{"name_ch":"乙医院","lng":0,"address":"乙路1号","lat":0,"name_en":"Hospital Yi","id":"33928d320"},{"name_ch":"丙医院","lng":0,"address":"丙路1号","lat":0,"name_en":"Hospital Bing","id":"33958d320"},{"name_ch":"丁医院","lng":0,"address":"丁路1号","lat":0,"name_en":"Hospital Ding","id":"33998d320"}]
 
-def get_post(id, check_author=True):
-    """Get a post and its author by id.
+@bp.route('/hospital', methods=('GET', 'POST'))
+# @login_required
+def hospitals():
+    if request.method == 'GET':
+        requests.get(ENDPOINT+'/hospital/')
+        return json.dumps(TEST_DATA)
+    elif request.method == 'POST':
+        return ""
+    else:
+        abort(405)
 
-    Checks that the id exists and optionally that the current user is
-    the author.
+@bp.route('/hospital/<int:id>', methods=('GET', 'PUT', 'DELETE'))
+# @login_required
+def hospital(id):
+    pass
 
-    :param id: id of post to get
-    :param check_author: require the current user to be the author
-    :return: the post with author information
-    :raise 404: if a post with the given id doesn't exist
-    :raise 403: if the current user isn't the author
-    """
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
+@bp.route('/distance', methods=('GET', ))
+# @login_required
+def distance():
+    pass
 
-    if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
+# # TODO: remove
+# def get_post(id, check_author=True):
+    # """Get a post and its author by id.
 
-    if check_author and post['author_id'] != g.user['id']:
-        abort(403)
+    # Checks that the id exists and optionally that the current user is
+    # the author.
 
-    return post
+    # :param id: id of post to get
+    # :param check_author: require the current user to be the author
+    # :return: the post with author information
+    # :raise 404: if a post with the given id doesn't exist
+    # :raise 403: if the current user isn't the author
+    # """
+    # post = get_db().execute(
+        # 'SELECT p.id, title, body, created, author_id, username'
+        # ' FROM post p JOIN user u ON p.author_id = u.id'
+        # ' WHERE p.id = ?',
+        # (id,)
+    # ).fetchone()
 
+    # if post is None:
+        # abort(404, "Post id {0} doesn't exist.".format(id))
 
-@bp.route('/create', methods=('GET', 'POST'))
-@login_required
-def create():
-    """Create a new post for the current user."""
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
+    # if check_author and post['author_id'] != g.user['id']:
+        # abort(403)
 
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
-            return redirect(url_for('blog.index'))
-
-    return render_template('blog/create.html')
+    # return post
 
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
-@login_required
-def update(id):
-    """Update a post if the current user is the author."""
-    post = get_post(id)
+# @bp.route('/create', methods=('GET', 'POST'))
+# @login_required
+# def create():
+    # """Create a new post for the current user."""
+    # if request.method == 'POST':
+        # title = request.form['title']
+        # body = request.form['body']
+        # error = None
 
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
+        # if not title:
+            # error = 'Title is required.'
 
-        if not title:
-            error = 'Title is required.'
+        # if error is not None:
+            # flash(error)
+        # else:
+            # db = get_db()
+            # db.execute(
+                # 'INSERT INTO post (title, body, author_id)'
+                # ' VALUES (?, ?, ?)',
+                # (title, body, g.user['id'])
+            # )
+            # db.commit()
+            # return redirect(url_for('blog.index'))
 
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'UPDATE post SET title = ?, body = ? WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
-            return redirect(url_for('blog.index'))
-
-    return render_template('blog/update.html', post=post)
+    # return render_template('blog/create.html')
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
-@login_required
-def delete(id):
-    """Delete a post.
+# @bp.route('/<int:id>/update', methods=('GET', 'POST'))
+# @login_required
+# def update(id):
+    # """Update a post if the current user is the author."""
+    # post = get_post(id)
 
-    Ensures that the post exists and that the logged in user is the
-    author of the post.
-    """
-    get_post(id)
-    db = get_db()
-    db.execute('DELETE FROM post WHERE id = ?', (id,))
-    db.commit()
-    return redirect(url_for('blog.index'))
+    # if request.method == 'POST':
+        # title = request.form['title']
+        # body = request.form['body']
+        # error = None
+
+        # if not title:
+            # error = 'Title is required.'
+
+        # if error is not None:
+            # flash(error)
+        # else:
+            # db = get_db()
+            # db.execute(
+                # 'UPDATE post SET title = ?, body = ? WHERE id = ?',
+                # (title, body, id)
+            # )
+            # db.commit()
+            # return redirect(url_for('blog.index'))
+
+    # return render_template('blog/update.html', post=post)
+
+
+# @bp.route('/<int:id>/delete', methods=('POST',))
+# @login_required
+# def delete(id):
+    # """Delete a post.
+
+    # Ensures that the post exists and that the logged in user is the
+    # author of the post.
+    # """
+    # get_post(id)
+    # db = get_db()
+    # db.execute('DELETE FROM post WHERE id = ?', (id,))
+    # db.commit()
+    # return redirect(url_for('blog.index'))
