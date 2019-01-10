@@ -1,0 +1,47 @@
+<!-- Modal -->
+<div class="modal fade" id="addHospital" tabindex="-1" role="dialog" aria-labelledby="addHospitalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addHospitalTitle">Please choose the right hospital</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="list-group list-group-flush" v-for="(h, idx) in candidates">
+          <button type="button" class="list-group-item list-group-item-action" data-dismiss="modal" v-on:click="handleNewHospital(idx)">
+            <div class="row">
+              <label for="h-name" class="col-md-2 col-4 col-form-label-sm">Name</label>
+              <div class="col-md-4 col-auto">
+                <input :value="h.name_ch" type="text" class="form-control-plaintext form-control-sm" id="h-name" placeholder="Name" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <label for="h-address" class="col-md-2 col-4 col-form-label-sm">Address</label>
+              <div class="col-md-4 col-auto">
+                <input :value="h.address" type="text" class="form-control-plaintext form-control-sm" id="h-address" placeholder="Address" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <label for="h-lng" class="col-md-2 col-4 col-form-label-sm">Longitude</label>
+              <div class="col-md-4 col-auto">
+                <input :value="h.lng" type="text" class="form-control-plaintext form-control-sm" id="h-lng" placeholder="Longitude" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <label for="h-lat" class="col-md-2 col-4 col-form-label-sm">Latitude</label>
+              <div class="col-md-4 col-auto">
+                <input :value="h.lat" type="text" class="form-control-plaintext form-control-sm" id="h-lat" placeholder="Latitude" readonly>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+

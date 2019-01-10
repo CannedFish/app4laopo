@@ -1,0 +1,52 @@
+<div id="search-tab" class="content-tab" v-bind:class="{hidden: !searchTab}">
+  <div class="row">
+    <div class="form-group col-md-4 col-xs-12">
+      <label class="sr-only" for="search-input">Search Input</label>
+      <input type="text" class="form-control" id="search-input" placeholder="Target distance(KM)" v-model="targetDistance">
+    </div>
+    <div class="form-group col-md-4 col-xs-12">
+      <label class="sr-only" for="hospital">Hospital Name</label>
+      <input type="text" class="form-control" id="hospital" placeholder="Hospital Name">
+    </div>
+    <div class="form-group col-md-1 col-xs-12">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="src-radio" value="src" checked>
+        <label class="form-check-label" for="src-radio">source</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="dst-radio" value="dst">
+        <label class="form-check-label" for="dst-radio">destination</label>
+      </div>
+    </div>
+    <div class="form-group col-md-2 col-xs-12">
+      <button class="btn btn-primary center-block" v-on:click="searchAction">Search</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-xs-12">
+      <table class="table table-hover table-sm" id="result">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">From</th>
+            <th scope="col">From(EN)</th>
+            <th scope="col">To</th>
+            <th scope="col">To(EN)</th>
+            <th scope="col">Mistakes(KM)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(re, idx) in results">
+            <th scope="row">{[{ idx }]}</th>
+            <td>{[{ re.src.name_ch }]}</td>
+            <td>{[{ re.src.name_en }]}</td>
+            <td>{[{ re.dst.name_ch }]}</td>
+            <td>{[{ re.dst.name_en }]}</td>
+            <td>{[{ re.distance }]}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

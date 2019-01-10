@@ -1,10 +1,15 @@
+# -*- coding: utf-8 -*-
 import os
+from logging.config import fileConfig
 
 from flask import Flask, render_template
 
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
+    logging_conf_path = os.path.normpath(os.path.join(os.path.dirname(__file__), 'logging.conf'))
+    fileConfig(logging_conf_path)
+
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config

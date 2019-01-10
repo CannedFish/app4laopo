@@ -70,7 +70,24 @@ function _getHospitals() {
   });
 }
 
-function _searchHospital(evt) {
+function _addHospital(evt) {
+  this.$http.get('/reimbursement/location?name=医院').then(res => {
+    this.candidates = res.body;
+  }, err => {
+    console.log(err);
+  });
+}
+
+function _handleNewHospital(idx) {
+  this.$http.post('/reimbursement/hospital'
+      , this.candidates[idx]).then(res => {
+    this.hospitals.push(res.body);
+    this.hospitalName = '';
+    // NOTE: not worked
+    this.$emit('input', this.hospitalName);
+  }, err => {
+    console.log(err);
+  })
 }
 
 var idxShown = null;
@@ -89,6 +106,18 @@ function _handleDetailCancel() {
   tabs.hospitalDetail.name_en = tmpDetail.name_en;
 }
 
+function _matchHospital(idx) {
+  return !hospitals[idx].name_ch.includes(this.hospitalName)
+    && !hospitals[idx].name_en.includes(this.hospitalName);
+}
+
+function _checkInput() {
+  let self = this;
+  this.$nextTick(() => {
+    self.noMatch = (self.$el.querySelectorAll("tr.hidden").length === hospitals.length);
+  });
+}
+
 var tabs = new Vue({
   el: '#nav-tabs',
   data: {
@@ -100,7 +129,9 @@ var tabs = new Vue({
     // mgt tab
     hospitals: [],
     hospitalName: '',
-    hospitalDetail: {}
+    hospitalDetail: {},
+    noMatch: false,
+    candidates: []
   },
   methods: {
     toggle: function (tabIdx, evt) {
@@ -113,10 +144,13 @@ var tabs = new Vue({
     searchAction: _searchAction,
     // mgt tab
     getHospitals: _getHospitals,
-    searchHospital: _searchHospital,
+    addHospital: _addHospital,
+    handleNewHospital: _handleNewHospital,
     handleHospitalDetailShow: _handleHospitalDetailShow,
     handleDetailSave: _handleDetailSave,
-    handleDetailCancel: _handleDetailCancel
+    handleDetailCancel: _handleDetailCancel,
+    matchHospital: _matchHospital,
+    checkInput: _checkInput
   },
   created: function () {
     _getHospitals.apply(this);

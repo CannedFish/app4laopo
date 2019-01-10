@@ -12,7 +12,7 @@ from app4laopo.db import get_db
 
 bp = Blueprint('reimbursement', __name__, url_prefix='/reimbursement')
 ENDPOINT = "http://127.0.0.1:5000/api/v1"
-LOG = current_app.logger
+
 
 @bp.route('/')
 def index():
@@ -23,7 +23,7 @@ def index():
         # ' FROM post p JOIN user u ON p.author_id = u.id'
         # ' ORDER BY created DESC'
     # ).fetchall()
-    return render_template('reimbursement.html')
+    return render_template('reimbursement/reimbursement.html')
 
 TEST_DATA = [{"name_ch":"甲医院","lng":0,"address":"甲路1号","lat":0,"name_en":"Hospital Jia","id":"33928d323"},{"name_ch":"乙医院","lng":0,"address":"乙路1号","lat":0,"name_en":"Hospital Yi","id":"33928d320"},{"name_ch":"丙医院","lng":0,"address":"丙路1号","lat":0,"name_en":"Hospital Bing","id":"33958d320"},{"name_ch":"丁医院","lng":0,"address":"丁路1号","lat":0,"name_en":"Hospital Ding","id":"33998d320"}]
 
@@ -31,12 +31,26 @@ TEST_DATA = [{"name_ch":"甲医院","lng":0,"address":"甲路1号","lat":0,"name
 # @login_required
 def hospitals():
     if request.method == 'GET':
-        requests.get(ENDPOINT+'/hospital/')
+        res = requests.get(ENDPOINT+'/hospital/')
+        current_app.logger.debug(res.text)
         return json.dumps(TEST_DATA)
     elif request.method == 'POST':
-        return ""
+        current_app.logger.debug(request.data)
+        h = json.loads(request.data)
+        h['id'] = "3x928d323"
+        TEST_DATA.append(h)
+        return json.dumps(h), 201
     else:
         abort(405)
+
+TEST_DATA2 = [{"name_ch":"甲医院2","lng":0,"address":"甲2路1号","lat":0},{"name_ch":"乙医院2","lng":0,"address":"乙2路1号","lat":0},{"name_ch":"丙医院2","lng":0,"address":"丙2路1号","lat":0},{"name_ch":"丁医院2","lng":0,"address":"丁2路1号","lat":0}]
+
+@bp.route('/location', methods=('GET', ))
+# @login_required
+def location():
+    h_name = request.args.get('name', '')
+    current_app.logger.debug(h_name)
+    return json.dumps(TEST_DATA2)
 
 @bp.route('/hospital/<int:id>', methods=('GET', 'PUT', 'DELETE'))
 # @login_required

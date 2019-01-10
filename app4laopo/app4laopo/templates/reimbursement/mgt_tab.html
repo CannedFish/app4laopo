@@ -1,0 +1,44 @@
+<div id="management-tab" class="content-tab" v-bind:class="{hidden: !mgtTab}">
+  <div class="row">
+    <div class="form-group col-md-4 col-xs-12">
+      <label class="sr-only" for="hospital-mgt-search">Hospital Name</label>
+      <input type="text" class="form-control" id="hospital-mgt-search" placeholder="Hospital Name" v-model="hospitalName" v-on:input="checkInput">
+    </div>
+    <div class="form-group col-md-4 col-xs-12">
+      <button class="btn btn-primary">Import</button>
+      <button class="btn btn-primary">Export</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 col-xs-12" v-bind:class="{invisible: !noMatch}">
+      <p><span class="badge badge-warning">!</span> No matched, you could <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addHospital" v-on:click="addHospital">add</button> this one.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-xs-12">
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Name(EN)</th>
+            <th scope="col" class="d-none d-sm-table-cell">Address</th>
+            <th scope="col" class="d-none d-sm-table-cell">Longitude</th>
+            <th scope="col" class="d-none d-sm-table-cell">Latitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(h, idx) in hospitals" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)" v-bind:class="{hidden: matchHospital(idx)}">
+            <th scope="row">{[{ idx }]}</th>
+            <td>{[{ h.name_ch }]}</td>
+            <td>{[{ h.name_en }]}</td>
+            <td class="d-none d-sm-table-cell">{[{ h.address }]}</td>
+            <td class="d-none d-sm-table-cell">{[{ h.lng }]}</td>
+            <td class="d-none d-sm-table-cell">{[{ h.lat }]}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

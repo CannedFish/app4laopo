@@ -1,0 +1,40 @@
+<!-- Modal -->
+<div class="modal fade" id="hospitalDetail" tabindex="-1" role="dialog" aria-labelledby="hospitalDetailTitle" aria-hidden="true" v-on:show.bs.modal="handleHospitalDetailShow">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="hospitalDetailTitle">Hospital detail</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" v-on:click="handleDetailCancel">
+          <span aria-hidden="true" v-on:click="handleDetailCancel">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="h-name">Name</label>
+          <input v-model="hospitalDetail.name_ch" type="text" class="form-control" id="h-name" placeholder="Name" readonly>
+        </div>
+        <div class="form-group">
+          <label for="h-name-en">Name(EN)</label>
+          <input v-model="hospitalDetail.name_en" type="text" class="form-control" id="h-name-en" placeholder="Name(EN)">
+        </div>
+        <div class="form-group">
+          <label for="h-address">Address</label>
+          <input v-model="hospitalDetail.address" type="text" class="form-control" id="h-address" placeholder="Address" readonly>
+        </div>
+        <div class="form-group">
+          <label for="h-lng">Longitude</label>
+          <input v-model="hospitalDetail.lng" type="text" class="form-control" id="h-lng" placeholder="Longitude" readonly>
+        </div>
+        <div class="form-group">
+          <label for="h-lat">Latitude</label>
+          <input v-model="hospitalDetail.lat" type="text" class="form-control" id="h-lat" placeholder="Latitude" readonly>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="handleDetailCancel">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="handleDetailSave">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
