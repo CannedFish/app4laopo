@@ -38,6 +38,7 @@ def hospitals():
         current_app.logger.debug(request.data)
         h = json.loads(request.data)
         h['id'] = "3x928d323"
+        h['name_en'] = ""
         TEST_DATA.append(h)
         return json.dumps(h), 201
     else:
@@ -57,10 +58,16 @@ def location():
 def hospital(id):
     pass
 
+TEST_DATA3 = [{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"24"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"25"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"28"}]
+
 @bp.route('/distance', methods=('GET', ))
 # @login_required
 def distance():
-    pass
+    target = request.args.get('target', '20')
+    h_name = request.args.get('name', '')
+    end_type = request.args.get('type', 'src')
+    current_app.logger.debug("target: %s, name: %s, type: %s" % (target, h_name, end_type))
+    return json.dumps(TEST_DATA3)
 
 # # TODO: remove
 # def get_post(id, check_author=True):

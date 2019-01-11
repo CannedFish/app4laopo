@@ -1,68 +1,26 @@
 Vue.options.delimiters = ['{[{', '}]}'];
 
 function _searchAction(evt) {
-  console.log(this, tabs.targetDistance)
-  tabs.results = [{
-    src: {
-      name_ch: '甲医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Jia',
-      id: '33928d120'
-    },
-    dst: {
-      name_ch: '乙医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Yi',
-      id: '33928d320'
-    },
-    distance: '24'
-  }, {
-    src: {
-      name_ch: '甲医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Jia',
-      id: '33928d120'
-    },
-    dst: {
-      name_ch: '乙医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Yi',
-      id: '33928d320'
-    },
-    distance: '25'
-  }, {
-    src: {
-      name_ch: '甲医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Jia',
-      id: '33928d120'
-    },
-    dst: {
-      name_ch: '乙医院',
-      lng: 0,
-      address: '',
-      lat: 0,
-      name_en: 'Hospital Yi',
-      id: '33928d320'
-    },
-    distance: '28'
-  }]
+  if(this.targetDistance == '') {
+    $(".alert").alert();
+    return;
+  }
+  if(this.targetHospital == '') {
+    alert("hospital");
+    return;
+  }
+  let url = `/reimbursement/distance?target=${this.targetDistance}&name=${this.targetHospital}&type=${this.targetType}`;
+  this.$http.get(url).then(res => {
+    this.results = res.body;
+  }, err => {
+    console.log(err);
+  });
 }
 
 var hospitals = []
 function _getHospitals() {
   this.$http.get('/reimbursement/hospital').then(res => {
-    console.log(res);
+    // console.log(res);
     hospitals = res.body;
     this.hospitals = hospitals;
   }, err => {
@@ -71,7 +29,7 @@ function _getHospitals() {
 }
 
 function _addHospital(evt) {
-  this.$http.get('/reimbursement/location?name=医院').then(res => {
+  this.$http.get('/reimbursement/location?name=' + this.hospitalName).then(res => {
     this.candidates = res.body;
   }, err => {
     console.log(err);
@@ -83,11 +41,13 @@ function _handleNewHospital(idx) {
       , this.candidates[idx]).then(res => {
     this.hospitals.push(res.body);
     this.hospitalName = '';
-    // NOTE: not worked
-    this.$emit('input', this.hospitalName);
+    let self = this;
+    this.$nextTick(() => {
+      self.$el.querySelector("#hospital-mgt-search").dispatchEvent(new Event('input'));
+    });
   }, err => {
     console.log(err);
-  })
+  });
 }
 
 var idxShown = null;
@@ -112,6 +72,7 @@ function _matchHospital(idx) {
 }
 
 function _checkInput() {
+  // console.log(this.hospitalName);
   let self = this;
   this.$nextTick(() => {
     self.noMatch = (self.$el.querySelectorAll("tr.hidden").length === hospitals.length);
@@ -125,6 +86,10 @@ var tabs = new Vue({
     mgtTab: false,
     // search tab
     targetDistance: '',
+    targetHospital: '',
+    targetType: 'src',
+    src: 'src',
+    dst: 'dst',
     results: [],
     // mgt tab
     hospitals: [],
