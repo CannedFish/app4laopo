@@ -2,11 +2,19 @@ Vue.options.delimiters = ['{[{', '}]}'];
 
 function _searchAction(evt) {
   if(this.targetDistance == '') {
-    $(".alert").alert();
+    alerts.add({
+      timeout: 3000,
+      info: "Target distance is none!",
+      level: "warning"
+    });
     return;
   }
   if(this.targetHospital == '') {
-    alert("hospital");
+    alerts.add({
+      timeout: 3000,
+      info: "Target hospital is none!",
+      level: "warning"
+    });
     return;
   }
   let url = `/reimbursement/distance?target=${this.targetDistance}&name=${this.targetHospital}&type=${this.targetType}`;

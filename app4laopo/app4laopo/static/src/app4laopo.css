@@ -3,3 +3,9 @@ body {
   padding-bottom: 30px;
 }
 
+#alerts {
+  position: absolute !important;
+  z-index: 99;
+  right: 10%;
+}
+

@@ -40,12 +40,18 @@
     </div>
   </nav>
   <div class="container" role="main">
+    <div id="alerts">
+      <div class="alert fade show" v-for="msg in msgs" :class="{'alert-success': 'success'===msg.level, 'alert-warning': 'warning'===msg.level, 'alert-danger': 'danger'===msg.level}" role="alert">
+        {[{ msg.info }]}
+      </div>
+    </div>
     {% block content %}{% endblock %}
   </div>
   <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
   <script src="{{ url_for('static', filename='public/js/jquery-3.3.1.min.js') }}"></script>
   <script src="{{ url_for('static', filename='public/js/popper.min.js') }}"></script>
   <script src="{{ url_for('static', filename='public/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='src/utils.js') }}"></script>
   {% block import %}{% endblock %}
 </body>
 
