@@ -15,10 +15,12 @@ def _batch_create(hospitals):
     for hospital in hospitals['hospitals']:
         h = Hospital(id=str(uuid.uuid4())
             , name_ch=hospital['name_ch']
-            , name_en=hospital['name_en']
+            , name_en=None
             , address=hospital['address']
             , lng=hospital['lng']
             , lat=hospital['lat'])
+        if hospital.has_key('name_en'):
+            h.name_en = hospital['name_en']
         db.session.add(h)
         ret['hospitals'].append(h)
     db.session.commit()

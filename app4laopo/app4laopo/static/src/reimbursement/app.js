@@ -22,6 +22,11 @@ function _searchAction(evt) {
     this.results = res.body;
   }, err => {
     console.log(err);
+    alerts.add({
+      timeout: 5000,
+      info: `${err.status} ${err.statusText}`,
+      level: "danger"
+    });
   });
 }
 
@@ -33,6 +38,11 @@ function _getHospitals() {
     this.hospitals = hospitals;
   }, err => {
     console.log(err);
+    alerts.add({
+      timeout: 5000,
+      info: `${err.status} ${err.statusText}`,
+      level: "danger"
+    });
   });
 }
 
@@ -41,6 +51,11 @@ function _addHospital(evt) {
     this.candidates = res.body;
   }, err => {
     console.log(err);
+    alerts.add({
+      timeout: 5000,
+      info: `${err.status} ${err.statusText}`,
+      level: "danger"
+    });
   });
 }
 
@@ -48,6 +63,12 @@ function _handleNewHospital(idx) {
   this.$http.post('/reimbursement/hospital'
       , this.candidates[idx]).then(res => {
     this.hospitals.push(res.body);
+    alerts.add({
+      timeout: 3000,
+      info: "Added a hospital!",
+      level: "success"
+    });
+
     this.hospitalName = '';
     let self = this;
     this.$nextTick(() => {
@@ -55,6 +76,11 @@ function _handleNewHospital(idx) {
     });
   }, err => {
     console.log(err);
+    alerts.add({
+      timeout: 5000,
+      info: `${err.status} ${err.statusText}`,
+      level: "danger"
+    });
   });
 }
 
@@ -67,7 +93,23 @@ function _handleHospitalDetailShow(idx, evt) {
 }
 
 function _handleDetailSave() {
-  // TODO: request to update
+  // Request to update backend data
+  let url = `/reimbursement/hospital/${this.hospitalDetail.id}`;
+  this.$http.put(url, this.hospitalDetail).then(res => {
+    alerts.add({
+      timeout: 3000,
+      info: "Updated a hospital!",
+      level: "success"
+    });
+  }, err => {
+    console.log(err);
+    alerts.add({
+      timeout: 5000,
+      info: `${err.status} ${err.statusText}`,
+      level: "danger"
+    });
+    _handleDetailCancel();
+  });
 }
 
 function _handleDetailCancel() {

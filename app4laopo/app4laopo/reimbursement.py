@@ -53,10 +53,18 @@ def location():
     current_app.logger.debug(h_name)
     return json.dumps(TEST_DATA2)
 
-@bp.route('/hospital/<int:id>', methods=('GET', 'PUT', 'DELETE'))
+@bp.route('/hospital/<string:id>', methods=('GET', 'PUT', 'DELETE'))
 # @login_required
 def hospital(id):
-    pass
+    if request.method == 'GET':
+        current_app.logger.debug("GET: %s" % id)
+        return 200
+    elif request.method == 'PUT':
+        current_app.logger.debug("PUT update: %s" % request.data)
+        return request.data, 200
+    else:
+        current_app.logger.debug("DELETE: %s" % id)
+        return 200
 
 TEST_DATA3 = [{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"24"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"25"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"28"}]
 
