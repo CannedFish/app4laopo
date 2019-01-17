@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='reimbursement',
-    version='0.1.0',
+    version='0.2.0',
     description='The reimbursement application with RESTful API based on Flask-RESTPlus',
     url='',
     author='CannedFish',

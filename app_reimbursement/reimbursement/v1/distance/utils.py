@@ -73,3 +73,23 @@ def trans_new_hospital_to_distance(hospitals, old):
 
     return old
 
+def location_search(name):
+    url = 'http://api.map.baidu.com/place/v2/search'
+    payload = {
+        'output': 'json',
+        'ak': KEY,
+        'region': '北京',
+        'query': name
+    }
+    for _ in range(RETRY):
+        res = requests.get(url, params=payload)
+        LOG.debug("[Get location] request to %s" % res.url)
+        time.sleep(WAIT)
+        LOG.info("Waited for %d second(s)" % WAIT)
+        ret = res.json()
+        if ret['status'] == 401:
+            LOG.error("Calc failed: %d, %s" % (ret['status'], ret['message']))
+            LOG.debug("Retring by %d time" % _+1)
+            continue
+        return ret
+
