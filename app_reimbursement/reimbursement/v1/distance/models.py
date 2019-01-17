@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import uuid
 
 from sqlalchemy.orm import aliased
 
@@ -10,7 +11,8 @@ LOG = logging.getLogger(__name__)
 def _batch_create(distances):
     ret = {'distances': []}
     for distance in distances['distances']:
-        d = Distance(src_id=distance['src_id']\
+        d = Distance(id=str(uuid.uuid4())\
+                , src_id=distance['src_id']\
                 , dst_id=distance['dst_id']\
                 , distance=distance['distance'])
         db.session.add(d)
@@ -27,10 +29,11 @@ def _delete_distance(hospital_id):
     return distances
 
 class Distance(db.Model):
+    id = db.Column(db.String(64), primary_key=True)
     src_id = db.Column(db.String(64), db.ForeignKey('hospital.id')\
-            , nullable=False, primary_key=True)
+            , nullable=False)
     dst_id = db.Column(db.String(64), db.ForeignKey('hospital.id')\
-            , nullable=False, primary_key=True)
+            , nullable=False)
     distance = db.Column(db.Integer, nullable=False)
 
     src_hospital = db.relationship("Hospital", foreign_keys=[src_id])

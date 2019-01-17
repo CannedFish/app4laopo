@@ -41,7 +41,7 @@ def _data_import(_p):
     } for idx in range(len(content)) if idx not in to_del]
     LOG.debug(len(payload))
     headers = {'Content-Type': 'application/json'}
-    LOG.debug(json.dumps(payload))
+    # LOG.debug(json.dumps(payload))
     res = requests.post('http://127.0.0.1:5000/api/v1/hospital/'\
             , data = json.dumps({'hospitals': payload}), headers = headers)
     LOG.debug(res.status_code)
