@@ -7,7 +7,7 @@ with io.open('README.rst', 'rt', encoding='utf8') as f:
 
     setup(
         name='app4laopo',
-        version='0.0.1',
+        version='0.1.0',
         url='https://github.com/CannedFish/app4laopo/tree/bs_master/ui/',
         license='BSD',
         maintainer='CannedFish',

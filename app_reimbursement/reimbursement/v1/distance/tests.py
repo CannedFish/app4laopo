@@ -111,3 +111,50 @@ class DistanceTest(unittest.TestCase):
         self._test_list_src()
         self._test_list_dst()
 
+class DistanceTest2(unittest.TestCase):
+    def setUp(self):
+        self.base = 'http://127.0.0.1:5000/api/v1'
+        self.h_id = '82728dc2-d68b-4e1b-b957-31212f0a7632'
+
+    def test_list_int(self):
+        url = self.base + '/distance/'
+        payload = {
+            'num': 10,
+            'target': 20
+        }
+        res = requests.get(url, params=payload)
+        self.assertEqual(res.status_code, 200)
+        print res.text
+
+    def test_list_float_src(self):
+        url = self.base + '/distance/'
+        payload = {
+            'num': 10,
+            'target': 20.5,
+            'src': self.h_id
+        }
+        res = requests.get(url, params=payload)
+        self.assertEqual(res.status_code, 200)
+        print res.text
+
+    def test_list_float_dst(self):
+        url = self.base + '/distance/'
+        payload = {
+            'num': 5,
+            'target': 15.5,
+            'dst': self.h_id
+        }
+        res = requests.get(url, params=payload)
+        self.assertEqual(res.status_code, 200)
+        print res.text
+
+    def test_list_error(self):
+        url = self.base + '/distance/'
+        payload = {
+            'num': 5,
+            'dst': self.h_id
+        }
+        res = requests.get(url, params=payload)
+        self.assertEqual(res.status_code, 400)
+        print res.status_code
+

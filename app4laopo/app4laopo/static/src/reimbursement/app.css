@@ -12,3 +12,8 @@
   transform: translateX(-50%);
 }
 
+.hint {
+  position: absolute;
+  z-index: 2;
+}
+

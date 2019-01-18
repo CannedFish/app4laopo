@@ -6,7 +6,12 @@
     </div>
     <div class="form-group col-md-4 col-xs-12">
       <label class="sr-only" for="hospital">Hospital Name</label>
-      <input type="text" class="form-control" id="hospital" placeholder="Hospital Name" v-model="targetHospital">
+      <input type="text" class="form-control" id="hospital" placeholder="Hospital Name" v-model="targetHospital" v-on:focus="targetHospitalFocused = true" @click.stop="">
+      <div class="list-group hint" :class="{'d-none': !targetHospitalFocused}">
+        <button type="button" class="list-group-item list-group-item-action" v-for="(h, idx) in hospitals" v-on:click="searchInputChoose(idx)" :class="{hidden: matchHospital(idx, targetHospital)}" :key="h.id">
+          {[{ h.name_ch }]}
+        </button>
+      </div>
     </div>
     <div class="form-group col-md-1 col-xs-12">
       <div class="form-check form-check-inline">

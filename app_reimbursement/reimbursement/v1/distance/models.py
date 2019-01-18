@@ -28,6 +28,14 @@ def _delete_distance(hospital_id):
     db.session.commit()
     return distances
 
+def _cmp(x, y):
+    if x['distance'] < y['distance']:
+        return -1
+    elif x['distance'] > y['distance']:
+        return 1
+    else:
+        return 0
+
 class Distance(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     src_id = db.Column(db.String(64), db.ForeignKey('hospital.id')\
@@ -88,9 +96,10 @@ class Distance(db.Model):
                     'lng': r[10],
                     'lat': r[11]
                 },
-                'distance': r[12]
+                'distance': abs((r[12]/1000.0) - args['target'])
             })
-        return ret
+        return sorted(ret, _cmp)[:args['num']]
+        # return ret
 
     @classmethod
     def create(cls, data):

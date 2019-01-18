@@ -18,7 +18,7 @@ api.models[location.name] = location
 @api.route('/')
 class Location(Resource):
     location_parser = reqparse.RequestParser()
-    location_parser.add_argument('name', default=None\
+    location_parser.add_argument('name', required=True\
             , help='Location name to search')
 
     @api.doc('get location details')

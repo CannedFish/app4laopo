@@ -1,5 +1,12 @@
 Vue.options.delimiters = ['{[{', '}]}'];
 
+let targetHospitalIdx = null;
+function _searchInputChoose(idx) {
+  targetHospitalIdx = idx;
+  this.targetHospital = hospitals[targetHospitalIdx].name_ch;
+  this.targetHospitalFocused = false;
+}
+
 function _searchAction(evt) {
   if(this.targetDistance == '') {
     alerts.add({
@@ -17,7 +24,7 @@ function _searchAction(evt) {
     });
     return;
   }
-  let url = `/reimbursement/distance?target=${this.targetDistance}&name=${this.targetHospital}&type=${this.targetType}`;
+  let url = `/reimbursement/distance?target=${this.targetDistance}&id=${hospitals[targetHospitalIdx].id}&type=${this.targetType}`;
   this.$http.get(url).then(res => {
     this.results = res.body;
   }, err => {
@@ -116,9 +123,11 @@ function _handleDetailCancel() {
   tabs.hospitalDetail.name_en = tmpDetail.name_en;
 }
 
-function _matchHospital(idx) {
-  return !hospitals[idx].name_ch.includes(this.hospitalName)
-    && !hospitals[idx].name_en.includes(this.hospitalName);
+function _matchHospital(idx, h_name) {
+  return typeof(hospitals[idx].name_en) === "string" ?
+    !hospitals[idx].name_ch.includes(h_name)
+    && !hospitals[idx].name_en.includes(h_name)
+    : !hospitals[idx].name_ch.includes(h_name);
 }
 
 function _checkInput() {
@@ -134,15 +143,16 @@ var tabs = new Vue({
   data: {
     searchTab: true,
     mgtTab: false,
+    hospitals: [],
     // search tab
     targetDistance: '',
     targetHospital: '',
+    targetHospitalFocused: false,
     targetType: 'src',
     src: 'src',
     dst: 'dst',
     results: [],
     // mgt tab
-    hospitals: [],
     hospitalName: '',
     hospitalDetail: {},
     noMatch: false,
@@ -157,6 +167,7 @@ var tabs = new Vue({
     },
     // search tab
     searchAction: _searchAction,
+    searchInputChoose: _searchInputChoose,
     // mgt tab
     getHospitals: _getHospitals,
     addHospital: _addHospital,

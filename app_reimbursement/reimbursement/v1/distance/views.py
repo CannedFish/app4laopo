@@ -3,6 +3,7 @@ import logging
 
 from flask_restplus import Namespace, Resource\
         , reqparse
+from flask import abort
 
 from .serializers import Distance as distance
 from .models import Distance as DistanceModel
@@ -20,8 +21,8 @@ class DistanceList(Resource):
     distance_list_parser = reqparse.RequestParser()
     distance_list_parser.add_argument('num', type=int\
             , help='Number to be returned', default=20)
-    distance_list_parser.add_argument('target', type=int\
-            , help='Target distance to query', default=-1)
+    distance_list_parser.add_argument('target', type=float\
+            , help='Target distance to query', required=True)
     distance_list_parser.add_argument('src'\
             , help='Source hospital', default=None)
     distance_list_parser.add_argument('dst'\

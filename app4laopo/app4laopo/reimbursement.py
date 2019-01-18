@@ -25,57 +25,66 @@ def index():
     # ).fetchall()
     return render_template('reimbursement/reimbursement.html')
 
-TEST_DATA = [{"name_ch":"甲医院","lng":0,"address":"甲路1号","lat":0,"name_en":"Hospital Jia","id":"33928d323"},{"name_ch":"乙医院","lng":0,"address":"乙路1号","lat":0,"name_en":"Hospital Yi","id":"33928d320"},{"name_ch":"丙医院","lng":0,"address":"丙路1号","lat":0,"name_en":"Hospital Bing","id":"33958d320"},{"name_ch":"丁医院","lng":0,"address":"丁路1号","lat":0,"name_en":"Hospital Ding","id":"33998d320"}]
-
 @bp.route('/hospital', methods=('GET', 'POST'))
 # @login_required
 def hospitals():
+    url = ENDPOINT + '/hospital/'
     if request.method == 'GET':
-        res = requests.get(ENDPOINT+'/hospital/')
+        res = requests.get(url)
         current_app.logger.debug(res.text)
-        return json.dumps(TEST_DATA)
+        return res.text
     elif request.method == 'POST':
         current_app.logger.debug(request.data)
         h = json.loads(request.data)
-        h['id'] = "3x928d323"
-        h['name_en'] = ""
-        TEST_DATA.append(h)
-        return json.dumps(h), 201
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        payload = {"hospitals": [h]}
+        res = requests.post(url, data=json.dumps(payload), headers=headers)
+        return res.text, 201
     else:
         abort(405)
-
-TEST_DATA2 = [{"name_ch":"甲医院2","lng":0,"address":"甲2路1号","lat":0},{"name_ch":"乙医院2","lng":0,"address":"乙2路1号","lat":0},{"name_ch":"丙医院2","lng":0,"address":"丙2路1号","lat":0},{"name_ch":"丁医院2","lng":0,"address":"丁2路1号","lat":0}]
 
 @bp.route('/location', methods=('GET', ))
 # @login_required
 def location():
     h_name = request.args.get('name', '')
-    current_app.logger.debug(h_name)
-    return json.dumps(TEST_DATA2)
+    payload = {'name': h_name}
+    res = requests.get(ENDPOINT+'/location/', params=payload)
+    current_app.logger.debug(res.text)
+    return res.text
 
 @bp.route('/hospital/<string:id>', methods=('GET', 'PUT', 'DELETE'))
 # @login_required
 def hospital(id):
+    url = ENDPOINT + '/hospital/%s/' % id
     if request.method == 'GET':
         current_app.logger.debug("GET: %s" % id)
-        return 200
+        res = requests.get(url)
+        return res.text, res.status_code
     elif request.method == 'PUT':
         current_app.logger.debug("PUT update: %s" % request.data)
-        return request.data, 200
+        headers = {'Content-Type': 'application/json'}
+        res = requests.put(url, data=request.data, headers=headers)
+        return res.text, res.status_code
     else:
         current_app.logger.debug("DELETE: %s" % id)
-        return 200
-
-TEST_DATA3 = [{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"24"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"25"},{"src":{"name_ch":"甲医院","lng":0,"address":"","lat":0,"name_en":"Hospital Jia","id":"33928d120"},"dst":{"name_ch":"乙医院","lng":0,"address":"","lat":0,"name_en":"Hospital Yi","id":"33928d320"},"distance":"28"}]
+        res = requests.delete(url)
+        return res.text, res.status_code
 
 @bp.route('/distance', methods=('GET', ))
 # @login_required
 def distance():
-    target = request.args.get('target', '20')
-    h_name = request.args.get('name', '')
+    target = request.args.get('target', 20)
+    h_id = request.args.get('id', '')
     end_type = request.args.get('type', 'src')
-    current_app.logger.debug("target: %s, name: %s, type: %s" % (target, h_name, end_type))
-    return json.dumps(TEST_DATA3)
+    current_app.logger.debug("target: %s, name: %s, type: %s" % (target, h_id, end_type))
+    payload = {
+        'target': target,
+        end_type: h_id
+    }
+    res = requests.get(ENDPOINT+'/distance/', params=payload)
+    return res.text, res.status_code
 
 # # TODO: remove
 # def get_post(id, check_author=True):

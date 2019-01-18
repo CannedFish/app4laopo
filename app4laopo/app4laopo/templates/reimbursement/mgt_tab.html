@@ -28,7 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(h, idx) in hospitals" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)" v-bind:class="{hidden: matchHospital(idx)}">
+          <tr v-for="(h, idx) in hospitals" data-toggle="modal" data-target="#hospitalDetail" v-bind:data-idx="idx" v-on:click="handleHospitalDetailShow(idx, $event)" v-bind:class="{hidden: matchHospital(idx, hospitalName)}">
             <th scope="row">{[{ idx }]}</th>
             <td>{[{ h.name_ch }]}</td>
             <td>{[{ h.name_en }]}</td>
