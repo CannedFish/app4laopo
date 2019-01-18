@@ -3,14 +3,18 @@
 
 This repository contains an implementation of RESTful API for laopo application based on Flask and Flask-RESTPlus.
 
+## Deploy
+
+``` shell
+virtualenv venv
+source venv/bin/activate
+pip install -e .
+python reimbursement/app.py
+```
+
 ## Initialize
 
 ``` shell
->>> from reimbursement.app import initialize_app, app
->>> from reimbursement.database import reset_db
->>>
->>> initialize_app(app)
->>> with app.app_context():
-...     reset_db()
+python tools.py -c db
 ```
 
