@@ -3,7 +3,7 @@
 ```shell
 virtualenv venv
 source venv/bin/activate
-python install -e .
+pip install -e .
 flask init-db
 pip install waitress
 export FLASK_ENV=product
