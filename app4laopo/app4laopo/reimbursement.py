@@ -11,7 +11,7 @@ from app4laopo.auth import login_required
 from app4laopo.db import get_db
 
 bp = Blueprint('reimbursement', __name__, url_prefix='/reimbursement')
-ENDPOINT = "http://127.0.0.1:5000/api/v1"
+ENDPOINT = "http://127.0.0.1:9091/api/v1"
 
 
 @bp.route('/')

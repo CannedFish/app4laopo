@@ -19,7 +19,7 @@ class Config(object):
 class ProductionConfig(Config):
     # SQLAlchemy settings
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite'
-    SERVER_NAME = '0.0.0.0:8888'
+    # SERVER_NAME = '0.0.0.0:8888'
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -27,8 +27,6 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-
-cur_config = DevelopmentConfig
 
 # Baidu SDK
 KEY = "wnoBRxPcG46KAcnNEY5kIlOE9TmvBDnE"
