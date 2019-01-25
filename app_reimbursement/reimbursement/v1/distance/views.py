@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
-import logging
-
 from flask_restplus import Namespace, Resource\
         , reqparse
-from flask import abort
+from flask import abort, current_app
 
 from .serializers import Distance as distance
 from .models import Distance as DistanceModel
-
-LOG = logging.getLogger(__name__)
 
 api = Namespace('distance'
         , description='Distances related operations'
@@ -33,6 +29,6 @@ class DistanceList(Resource):
     @api.marshal_list_with(distance)
     def get(self):
         args = self.distance_list_parser.parse_args()
-        LOG.debug("Arguments: %s" % args)
+        current_app.logger.debug("Arguments: %s" % args)
         return DistanceModel.list(args)
 
