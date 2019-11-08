@@ -12,10 +12,12 @@ logging.config.fileConfig(logging_conf_path)
 LOG = logging.getLogger(__name__)
 
 def _reset_db():
-    from reimbursement.app import initialize_app, app
+    # from reimbursement.app import initialize_app, app
+    from reimbursement.app import create_app
     from reimbursement.database import reset_db
 
-    initialize_app(app)
+    # initialize_app(app)
+    app = create_app('ProductionConfig')
     with app.app_context():
         reset_db()
 
