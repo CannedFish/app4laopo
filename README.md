@@ -8,4 +8,5 @@ Browser/Server based version.
 
 - [x] Reimbursment: search a reasonable distance for taxi driving between two hospitals.
 - [ ] Record: a streamimg media application for recording erniu's happy life.
+- [ ] Discount: help to generate the best plan to combine items to by.
 
